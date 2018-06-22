@@ -1,0 +1,99 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="shared-styles.html">
+<link rel="lazy-import" href="my-app.html">
+
+<dom-module id="my-login">
+    <template>
+        <style include="shared-styles">
+            :host {
+                display: block;
+            }
+
+            .spx {
+                display: none;
+            }
+
+            .spx[loading] {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: #FFF;
+            }
+        </style>
+
+        <div hidden$="[[!offline]]">
+            <h1>Sorry you are currently off line and cannot login</h1>
+        </div>
+        <div hidden$="[[offline]]">
+            <div class="spx" loading$="[[!signedIn]]">
+                <h1>Welcome to the Alternative Genius Hub App</h1>
+                <paper-input label="User name" value="{{username}}"></paper-input>
+                <paper-input label="Password" type="password" value="{{password}}"></paper-input>
+                <paper-button raised on-click="_onLogin">Sign In</paper-button>
+            </div>
+        </div>
+        <my-app id="mainapp" hidden$="[[!signedIn]]" headers="[[headers]]" offline="[[offline]]" signed-in="[[signedIn]]"></my-app>
+    </template>
+    <script src="../bower_components/js-sha256/build/sha256.min.js"></script>
+    <script>
+        class MyLogin extends Polymer.Element {
+            static get is() {
+                return 'my-login';
+            }
+            static get properties() {
+                return {
+                    statusKnown: Object,
+                    username: String,
+                    password: String,
+                    userdata: Object,
+                    headers: Object,
+                    signature: String,
+                    signedIn: {
+                        type: Boolean,
+                        value: !1
+                    },
+                    offline: {
+                        type: Boolean,
+                        value: !1
+                    }
+                };
+            }
+            ready() {
+                super.ready();
+                window.addEventListener('log-out',
+                    () => this._logout());
+                this.offline = navigator.onLine === !1;
+                window.addEventListener("online", () => this._online());
+                window.addEventListener("offline", () => this._offline());
+                this.firebaseApp = this.$.firebaseApp;
+            }
+            _onLogin() {
+                Polymer.importHref('src/my-app.html', null, null, true);
+                const authString = "Basic " + btoa(this.username + ":" + sha256(this.username + this.password));
+                this.headers = {
+                    'Authorization': authString
+                };
+
+                this.signedIn = !this.signedIn;
+            }
+            _online() {
+                this.offline = !1;
+            }
+            _offline() {
+                this.offline = !0;
+            }
+            _logout() {
+                this.signedIn = !this.signedIn;
+            }
+        }
+        window.customElements.define(MyLogin.is, MyLogin);
+    </script>
+</dom-module>
