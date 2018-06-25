@@ -3,6 +3,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="shared-styles.html">
 <link rel="import" href="my-icons.html">
@@ -75,6 +76,9 @@
                     <span>Sign In</span>
                     <paper-progress class="btn-progress" hidden$="[[!inProgress]]" disabled$="[[!inProgress]]" indeterminate></paper-progress>
                 </paper-button>
+
+                <paper-checkbox value="{{remember}}">Remember details</paper-checkbox>
+
             </div>
         </div>
         <my-app id="mainapp" hidden$="[[!signedIn]]" headers="[[headers]]" offline="[[offline]]" signed-in="[[signedIn]]"></my-app>
@@ -93,6 +97,10 @@
                     userdata: Object,
                     headers: Object,
                     signature: String,
+                    remember: {
+                        type: String,
+                        value: 'on'
+                    },
                     _lastError: {
                         type: String,
                         value: "   "
@@ -119,8 +127,8 @@
                 window.addEventListener("online", () => this._online());
                 window.addEventListener("offline", () => this._offline());
                 window.addEventListener("switch", () => this._switchToApp());
+                this.remember = localStorage.getItem('remember');
                 if (localStorage.getItem('signedIn')) {
-                    Polymer.importHref('src/my-app.html', null, null, true);
                     this.dispatchEvent(new CustomEvent('switch', {
                         bubbles: true,
                         composed: true,
@@ -146,10 +154,20 @@
                     Polymer.importHref('src/my-app.html', null, null, true);
 
                     // Save the credentials for next login
-                    const credentials = {
-                        "username": username,
-                        "password": password
-                    };
+                    let credentials = {};
+                    if (this.remember) {
+                        credentials = {
+                            "username": username,
+                            "password": password
+                        };
+                        localStorage.setItem("remember", 'on');
+                    } else {
+                        credentials = {
+                            "username": "",
+                            "password": ""
+                        };
+                        localStorage.setItem("remember", 'off');
+                    }
                     localStorage.setItem("credentials", btoa(JSON.stringify(credentials)));
                     localStorage.setItem("signedIn", true);
                     this.inProgress = false;
@@ -159,7 +177,7 @@
                     this.inProgress = false;
                     let req = rejected.request;
                     let error = rejected.error;
-                    this.set('_lastError', 'Incorrect username or password');
+                    this.set('_lastError', 'Incorrect username, password or hub not responding');
                 });
             }
 
@@ -171,9 +189,9 @@
             }
             _logout() {
                 this.signedIn = !this.signedIn;
-                localStorage.setItem("username", '');
-                localStorage.setItem("password", '');
+                localStorage.setItem("credentials", '');
                 localStorage.setItem("signedIn", false);
+                localStorage.setItem("remember", false);
             }
 
             /**

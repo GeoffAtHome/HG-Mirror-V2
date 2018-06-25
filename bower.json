@@ -1,7 +1,7 @@
 {
-  "name": "polymer-starter-kit",
+  "name": "Genius Mirror V2",
   "authors": [
-    "The Polymer Authors"
+    "Geoff Soord"
   ],
   "license": "https://polymer.github.io/LICENSE.txt",
   "dependencies": {
@@ -27,7 +27,8 @@
     "paper-button": "PolymerElements/paper-button#^2.1.1",
     "js-sha256": "^0.9.0",
     "paper-progress": "PolymerElements/paper-progress#^2.1.1",
-    "paper-fab": "PolymerElements/Paper-fab#^2.1.0"
+    "paper-fab": "PolymerElements/Paper-fab#^2.1.0",
+    "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.4"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"
