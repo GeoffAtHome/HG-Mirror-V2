@@ -150,8 +150,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     // Polymer.Element#rootPath
                     url: {
                         type: String,
-                        value: "https://hub-server-1.heatgenius.co.uk/v3/zones"
-                        // value: "http://[[your.local.ip.address]]:1223/v3/zones"
+                        value: "https://hub-server-1.heatgenius.co.uk/v3/zones" // Remote
+                        // value: "http://[[your.local.ip.address]]:1223/v3/zones" // Local
                     },
                     headers: Object,
                     rootPath: String,
@@ -183,8 +183,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             _updateTimer(event) {
                 let ajax = this.$.update;
                 this.zoneId = event.detail.addr;
-                ajax.url = 'https://hub-server-1.heatgenius.co.uk/v3/zone/' + event.detail.addr;
-                // ajax.url = 'http://[[your.local.ip.address]]:1223/v3/zone/' + event.detail.addr;
+                ajax.url = 'https://hub-server-1.heatgenius.co.uk/v3/zone/' + event.detail.addr; // Remote
+                // ajax.url = 'http://[[your.local.ip.address]]:1223/v3/zone/' + event.detail.addr; // Local
                 ajax.body = JSON.stringify(event.detail.data);
 
                 ajax.generateRequest();
