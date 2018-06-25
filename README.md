@@ -34,7 +34,7 @@ Run
 `polymer build`
 
 ## To host
-Deploy the contents of the build directory required.
+Deploy the contents of the build directory as required.
 
 For more details about the Polymer-cli see [https://www.polymer-project.org/](https://www.polymer-project.org/)
 

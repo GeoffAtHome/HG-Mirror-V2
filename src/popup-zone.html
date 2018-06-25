@@ -10,8 +10,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-fab/paper-fab.html">
 <link rel="import" href="time-zone.html">
+<link rel="import" href="my-icons.html">
 <link rel="import" href="shared-styles.html">
 
 <dom-module id="popup-zone">
@@ -26,9 +27,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <h2>[[zone.strName]]</h2>
         <time-zone zone="[[zone]]"></time-zone>
 
-        <paper-button raised on-tap="_clear">Clear</paper-button>
-        <paper-button raised on-tap="_save">Save</paper-button>
-        <paper-button raised on-tap="_restore">Restore</paper-button>
+
+        <paper-fab class="save" title="Save" icon="my-icons:save" on-tap="_save"></paper-fab>
+        <paper-fab class="clear" title="Clear" icon="my-icons:clear" on-tap="_clear"></paper-fab>
+        <paper-fab class="restore" title="Restore" icon="my-icons:restore" on-tap="_restore"></paper-fab>
         <a id="hiddenSaver" href$="[[_file]]" download="{{_filename}}" hidden></a>
         <input id="filerestore" on-change="_restoreFile" accept="application/json" type="file" hidden/>
     </template>

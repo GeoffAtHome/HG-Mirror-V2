@@ -1,7 +1,11 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="shared-styles.html">
+<link rel="import" href="my-icons.html">
 <link rel="lazy-import" href="my-app.html">
 
 <dom-module id="my-login">
@@ -27,17 +31,50 @@
                 justify-content: center;
                 background-color: #FFF;
             }
+
+            .msg {
+                text-align: center;
+                font-size: 12px;
+                font-weight: 500;
+                line-height: 24px;
+                margin: 0;
+                padding: 0;
+            }
+
+            .msg--error {
+                color: #e84a5f;
+            }
+
+            paper-icon-button {
+                color: grey;
+            }
         </style>
 
+        <iron-ajax id="checkin" url="https://hub.geniushub.co.uk/checkin" headers="[[headers]]" handle-as="json" reject-with-request></iron-ajax>
         <div hidden$="[[!offline]]">
             <h1>Sorry you are currently off line and cannot login</h1>
         </div>
         <div hidden$="[[offline]]">
             <div class="spx" loading$="[[!signedIn]]">
                 <h1>Welcome to the Alternative Genius Hub App</h1>
-                <paper-input label="User name" value="{{username}}"></paper-input>
-                <paper-input label="Password" type="password" value="{{password}}"></paper-input>
-                <paper-button raised on-click="_onLogin">Sign In</paper-button>
+
+                <div class="msg msg--error">
+                    <span>[[_lastError]]</span>
+                </div>
+                <paper-input id="usernameInput" type="text" label="User name" value="{{username}}" error-message="User name required" on-keydown="_submitOnEnter"
+                    required>
+                </paper-input>
+
+                <paper-input id="passwordInput" type="password" label="Password" value="{{password}}" error-message="Password required" on-keydown="_submitOnEnter"
+                    required>
+                    <paper-icon-button id="passwordIconButton" slot="suffix" on-down="_revealPW" on-up="_hidePW" icon="my-icons:visibility" title="Hold to view password text">
+                    </paper-icon-button>
+                </paper-input>
+
+                <paper-button raised type="submit" on-click="_signIn" class="btn--signin" disabled$="[[inProgress]]">
+                    <span>Sign In</span>
+                    <paper-progress class="btn-progress" hidden$="[[!inProgress]]" disabled$="[[!inProgress]]" indeterminate></paper-progress>
+                </paper-button>
             </div>
         </div>
         <my-app id="mainapp" hidden$="[[!signedIn]]" headers="[[headers]]" offline="[[offline]]" signed-in="[[signedIn]]"></my-app>
@@ -56,6 +93,14 @@
                     userdata: Object,
                     headers: Object,
                     signature: String,
+                    _lastError: {
+                        type: String,
+                        value: "   "
+                    },
+                    inProgress: {
+                        type: Boolean,
+                        value: false
+                    },
                     signedIn: {
                         type: Boolean,
                         value: !1
@@ -73,17 +118,47 @@
                 this.offline = navigator.onLine === !1;
                 window.addEventListener("online", () => this._online());
                 window.addEventListener("offline", () => this._offline());
-                this.firebaseApp = this.$.firebaseApp;
+                window.addEventListener("switch", () => this._switchToApp());
+                if (localStorage.getItem('signedIn')) {
+                    Polymer.importHref('src/my-app.html', null, null, true);
+                    this.dispatchEvent(new CustomEvent('switch', {
+                        bubbles: true,
+                        composed: true,
+                    }));
+                }
             }
-            _onLogin() {
-                Polymer.importHref('src/my-app.html', null, null, true);
-                const authString = "Basic " + btoa(this.username + ":" + sha256(this.username + this.password));
+
+            _switchToApp() {
+                this.signIn(localStorage.getItem('username'), localStorage.getItem('password'));
+            }
+            signIn(username, password) {
+                this.inProgress = true;
+                const authString = "Basic " + btoa(username + ":" + sha256(username + password));
                 this.headers = {
                     'Authorization': authString
                 };
 
-                this.signedIn = !this.signedIn;
+                // Test the username and password
+                let request = this.$.checkin.generateRequest();
+                request.completes.then(req => {
+                    // succesful request, argument is iron-request element
+                    Polymer.importHref('src/my-app.html', null, null, true);
+
+                    // Save the credentials for next login
+                    localStorage.setItem("username", username);
+                    localStorage.setItem("password", password);
+                    localStorage.setItem("signedIn", true);
+                    this.inProgress = false;
+                    this.signedIn = !this.signedIn;
+                }, rejected => {
+                    // failed request, argument is an object
+                    this.inProgress = false;
+                    let req = rejected.request;
+                    let error = rejected.error;
+                    this.set('_lastError', 'Incorrect username or password');
+                });
             }
+
             _online() {
                 this.offline = !1;
             }
@@ -92,7 +167,71 @@
             }
             _logout() {
                 this.signedIn = !this.signedIn;
+                localStorage.setItem("username", '');
+                localStorage.setItem("password", '');
+                localStorage.setItem("signedIn", false);
             }
+
+            /**
+             * Cleans message and error sections.
+             */
+            _cleanMessages() {
+                this.set('_lastError', '   ');
+            }
+
+            /**
+             * Cleans email and password inputs.
+             */
+            _cleanInputs() {
+                this.$.usernameInput.value = '';
+                this._cleanPasswordInput();
+            }
+
+            /**
+             * Cleans password input
+             */
+            _cleanPasswordInput() {
+                this.passwordInput.value = '';
+            }
+            /**
+             * Tries to sign in a user using the form values.
+             */
+            _signIn() {
+                this._cleanMessages();
+                let e = this.$.usernameInput.validate();
+                let p = this.$.passwordInput.validate();
+                if (e && p) {
+                    this.signIn(this.username, this.password);
+                }
+            }
+            /**
+             *  Checks for enter being pressed and submits the appropriate form action
+             */
+            _submitOnEnter(e) {
+                if (e.keyCode === 13) {
+                    this._signIn()
+                }
+            }
+            /**
+             *  Reveals the password in the parent by switching the type to text
+             */
+            _revealPW(e) {
+                this.$.passwordIconButton.icon = 'my-icons:visibility-off';
+                this.$.passwordInput.type = 'text';
+            }
+
+            /**
+             * Hides the password in the parent by switching the type to password
+             */
+            _hidePW(e) {
+                setTimeout(function () {
+                    this.$.passwordIconButton.icon = 'my-icons:visibility';
+                    this.$.passwordInput.type = 'password';
+                }.bind(this), 1000)
+            }
+
+
+
         }
         window.customElements.define(MyLogin.is, MyLogin);
     </script>

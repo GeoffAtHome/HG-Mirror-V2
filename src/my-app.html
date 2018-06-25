@@ -97,6 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <br>
                     </template>
                     <div class="menuitem" name="timers" on-click="_clickTimersHandler">All timers</div>
+                    <div class="menuitem" name="logout" on-click="_logout">Logout</div>
                 </iron-selector>
             </app-drawer>
 
@@ -224,7 +225,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 }
                 if (this.timer == undefined) {
                     // Retrive the data from the server once a minute
-                    this.timer = setInterval(() => this.handleUpdate(), 1 * 60 * 1000);
+                    this.timer = setInterval(() => this.handleUpdate(), 20 * 1000);
                 }
             }
 
@@ -282,7 +283,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         true);
                 }
             }
-
+            _logout() {
+                this.dispatchEvent(new CustomEvent('log-out', {
+                    bubbles: true,
+                    composed: true,
+                }));
+            }
             _showPage404() {
                 this.page = 'view404';
             }
