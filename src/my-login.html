@@ -129,7 +129,8 @@
             }
 
             _switchToApp() {
-                this.signIn(localStorage.getItem('username'), localStorage.getItem('password'));
+                const credentials = JSON.parse(atob(localStorage.getItem("credentials")));
+                this.signIn(credentials.username, credentials.password);
             }
             signIn(username, password) {
                 this.inProgress = true;
@@ -145,8 +146,11 @@
                     Polymer.importHref('src/my-app.html', null, null, true);
 
                     // Save the credentials for next login
-                    localStorage.setItem("username", username);
-                    localStorage.setItem("password", password);
+                    const credentials = {
+                        "username": username,
+                        "password": password
+                    };
+                    localStorage.setItem("credentials", btoa(JSON.stringify(credentials)));
                     localStorage.setItem("signedIn", true);
                     this.inProgress = false;
                     this.signedIn = !this.signedIn;
