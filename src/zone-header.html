@@ -131,10 +131,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 if (zone.iMode === 16) {
                     return 'on';
                 }
-
             }
+
             _boost(event) {
-                return this.changeMode(event, 16);
+                this.dispatchEvent(new CustomEvent('boost-dialog', {
+                    bubbles: true,
+                    composed: true,
+                    detail: this.zone
+                }));
+                event.stopPropagation();
             }
 
             _timer(event) {

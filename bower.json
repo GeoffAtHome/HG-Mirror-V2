@@ -1,5 +1,5 @@
 {
-  "name": "Genius Mirror V2",
+  "name": "genius mirror v2",
   "authors": [
     "Geoff Soord"
   ],
@@ -28,7 +28,9 @@
     "js-sha256": "^0.9.0",
     "paper-progress": "PolymerElements/paper-progress#^2.1.1",
     "paper-fab": "PolymerElements/Paper-fab#^2.1.0",
-    "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.4"
+    "paper-checkbox": "PolymerElements/paper-checkbox#^2.0.4",
+    "paper-toggle-button": "PolymerElements/paper-toggle-button#^2.1.1",
+    "paper-duration-input": "faan11/paper-duration-input#^2.0.0"
   },
   "devDependencies": {
     "web-component-tester": "Polymer/web-component-tester#^6.0.0"
