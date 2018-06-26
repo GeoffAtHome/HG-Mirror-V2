@@ -71,7 +71,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     let results = [];
                     let data = this.zone.objTimer;
 
-                    results.push([days[0], String(1) + "℃", new Date(0 + tz), new Date(0 + tz)]);
+                    results.push([days[0], this.getText(1), new Date(0 + tz), new Date(0 + tz)]);
                     for (let day = 0; day < 7; day++) {
                         let today = data.filter(item => item.iDay == day)
                         let lastTime = 0;

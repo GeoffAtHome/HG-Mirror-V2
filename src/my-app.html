@@ -173,12 +173,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 window.addEventListener('showTimer', () => this._showTimer(event));
                 window.addEventListener('update-timer', () => this._updateTimer(event));
                 window.addEventListener('showTimers', () => this._clickTimersHandler(event));
+                window.addEventListener('change-mode', () => this._changeMode(event));
             }
 
             _showTimer(event) {
                 this.$.timer.zone = event.detail;
-                this.page = "timer";
+                this.zoneId = event.detail.iID;
                 this.pagezone = event.detail.name;
+                this.page = "timer";
             }
 
             _updateTimer(event) {
@@ -198,6 +200,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 console.log("Fetch data");
             }
 
+            _changeMode(event) {
+                event.stopPropagation();
+                event.preventDefault();
+                console.log(event.detail);
+                return false;
+            }
+
             handleResponse(e) {
                 let result = e.detail.response.data;
                 // Format the response
@@ -210,7 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 // Are we on the timer page?
                 if (this.page == "timer") {
                     // Yep - find the zone and update the timer
-                    let zone = this.data.filter(item => item.iID === this.zoneId)[0];
+                    let zone = this.liveData.filter(item => item.iID === this.zoneId)[0];
                     this.dispatchEvent(new CustomEvent('showTimer', {
                         bubbles: true,
                         composed: true,

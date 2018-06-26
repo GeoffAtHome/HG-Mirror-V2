@@ -30,7 +30,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
         </style>
         <div class="card" on-click="clickHandler">
-            <zone-header mode$="[[zone.iMode]]" boost$="[[zone.iBoostTimeRemaining]]" on$="[[getZoneState(zone.bOutRequestHeat)]]" name="[[zone.strName]]"></zone-header>
+            <zone-header zone="[[zone]]" on$="[[getZoneState(zone.bOutRequestHeat)]]"></zone-header>
             <div class="layout vertical start">
                 <template is="dom-repeat" items="[[zone.nodes]]" as="node" sort="_sort">
                     <device-card node="[[node]]" on="[[zone.bIsActive]]" data="[[getDeviceData(node)]]"></device-card>
@@ -62,7 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 return data;
             }
 
-            clickHandler() {
+            clickHandler(event) {
                 this.dispatchEvent(new CustomEvent('showTimer', {
                     bubbles: true,
                     composed: true,

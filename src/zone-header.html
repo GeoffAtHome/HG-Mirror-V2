@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../bower_components/polymer/polymer-element.html">
 <link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="last-seen.html">
 <link rel="import" href="shared-styles.html">
 
@@ -33,20 +34,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 background-color: orange;
             }
 
-            iron-icon {
-                padding-bottom: 5px;
+            paper-icon-button {
+                margin: 0px;
+                padding: 1px;
+                width: 28px;
+                height: 28px;
+            }
+
+            paper-icon-button:hover {
+                background-color: var(--paper-green-500);
+                color: white;
+            }
+
+            paper-icon-button.on {
+                color: black;
+                --paper-icon-button-ink-color: pink;
+            }
+
+            paper-icon-button.on:hover {
+                background-color: var(--paper-pink-500);
+                color: white;
             }
         </style>
         <div class="layout horizontal justified top">
-            <div> </div>
-            <div class="header">
-                <iron-icon id="icon">
-                    <span>[[setMode(mode)]]</span>
-                </iron-icon>
-                <span>[[name]]</span>
+            <div class="layout horizontal layout-start">
+                <paper-icon-button class$="[[isOff(zone)]]" title="Off" icon="my-icons:off" on-click="_off"></paper-icon-button>
+                <paper-icon-button class$="[[isBoost(zone)]]" title="Boost" icon="my-icons:boost" on-click="_boost"></paper-icon-button>
+                <paper-icon-button class$="[[isTimer(zone)]]" title="Timer" icon="my-icons:timer" on-click="_timer"></paper-icon-button>
+                <template is="dom-if" if="[[isNotSwitch(zone)]]">
+                    <paper-icon-button class$="[[isFootprint(zone)]]" title="Footprint" icon="my-icons:footprint" on-click="_footprint"></paper-icon-button>
+                </template>
             </div>
+            <span>[[zone.strName]]</span>
             <div>
-                <last-seen down lastseen="[[getBoost(boost)]]"></last-seen>
+                <last-seen down lastseen="[[getBoost(zone)]]"></last-seen>
             </div>
         </div>
     </template>
@@ -59,48 +80,87 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             static get properties() {
                 return {
-                    mode: Number,
-                    boost: Number,
-                    name: String,
+                    zone: Object
                 };
             }
 
-            getBoost(boost) {
-                if (this.mode === 16) {
-                    return boost;
+            isNotSwitch(zone) {
+                if (zone.nodes[0].childValues['SwitchBinary'] == undefined) {
+                    return true;
+                }
+                return false;
+            }
+
+            getBoost(zone) {
+                if (zone.iMode === 16) {
+                    return zone.iBoostTimeRemaining;
+                }
+                return -1;
+            }
+
+            // Mode_Off: 1,
+            // Mode_Timer: 2,
+            // Mode_Footprint: 4,
+            // Mode_Away: 8,
+            // Mode_Boost: 16,
+            // Mode_Early: 32,
+            // Mode_Test: 64,
+            // Mode_Linked: 128,
+            // Mode_Other: 256
+            isOff(zone) {
+                if (zone.iMode === 1 || zone.iMode === 8) {
+                    return 'on';
                 }
             }
 
-            setMode(mode) {
-                var value = "off";
 
-                // Mode_Off: 1,
-                // Mode_Timer: 2,
-                // Mode_Footprint: 4,
-                // Mode_Away: 8,
-                // Mode_Boost: 16,
-                // Mode_Early: 32,
-                // Mode_Test: 64,
-                // Mode_Linked: 128,
-                // Mode_Other: 256
-                switch (mode) {
-                    case 1:
-                    default:
-                        value = "off";
-                        break;
-
-                    case 2:
-                        value = "timer";
-                        break;
-
-                    case 4:
-                        value = "footprint";
-                        break;
-
-                    case 16:
-                        value = "boost"
+            isTimer(zone) {
+                if (zone.iMode === 2) {
+                    return 'on';
                 }
-                this.$.icon.setAttribute('icon', "my-icons:" + value);
+
+            }
+
+            isFootprint(zone) {
+                if (zone.iMode === 4) {
+                    return 'on';
+                }
+            }
+
+            isBoost(zone) {
+                if (zone.iMode === 16) {
+                    return 'on';
+                }
+
+            }
+            _boost(event) {
+                return this.changeMode(event, 16);
+            }
+
+            _timer(event) {
+                return this.changeMode(event, 2);
+            }
+
+            _off(event) {
+                return this.changeMode(event, 1);
+            }
+
+            _footprint(event) {
+                return this.changeMode(event, 4);
+            }
+
+            changeMode(event, mode) {
+                this.dispatchEvent(new CustomEvent('update-timer', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        addr: this.zone.iID,
+                        data: {
+                            iMode: mode
+                        }
+                    }
+                }));
+                event.stopPropagation();
             }
         }
 

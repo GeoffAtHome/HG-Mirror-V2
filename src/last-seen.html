@@ -49,15 +49,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             dataChanged(newData, oldData) {
                 if (newData) {
-                    if (this.timer == undefined) {
-                        this.timer = setInterval(() => this.update(), 1000);
-                    }
-                    if (this.down) {
-                        this.baseTime = new Date().getTime() + (this.lastseen * 1000);
+                    if (newData === -1) {
+                        if (this.timer) {
+                            clearInterval(this.timer);
+                            this.timer = undefined;
+                        }
+                        this.value = "";
                     } else {
-                        this.baseTime = this.lastseen * 1000;
+                        if (this.timer == undefined) {
+                            this.timer = setInterval(() => this.update(), 1000);
+                        }
+                        if (this.down) {
+                            this.baseTime = new Date().getTime() + (this.lastseen * 1000);
+                        } else {
+                            this.baseTime = this.lastseen * 1000;
+                        }
                     }
-
                 }
             }
 
