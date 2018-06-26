@@ -93,7 +93,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <iron-selector selected="[[pagezone]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <div class="menuitem" name="home" on-click="_clickHomeHandler">Home</div>
                     <template is="dom-repeat" items="[[persistedData]]" as="zone">
-                        <zone-menu zone="[[zone]]"></zone-menu>
+                        <zone-menu name="[[zone.strName]]" zone="[[zone]]"></zone-menu>
                         <br>
                     </template>
                     <div class="menuitem" name="timers" on-click="_clickTimersHandler">All timers</div>
