@@ -35,11 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 };
             }
             clickHandler() {
-                this.dispatchEvent(new CustomEvent('showTimer', {
+                const event = new CustomEvent('showTimer', {
                     bubbles: true,
                     composed: true,
                     detail: this.zone
-                }));
+                });
+                this.dispatchEvent(event);
             }
         }
 

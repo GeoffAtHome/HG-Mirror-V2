@@ -89,7 +89,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             _zoneChanged(zone) {
-                console.log(zone);
                 this.hour = zone.iOverrideDuration / (60 * 60); // Seconds to hours
                 this.minute = (zone.iOverrideDuration / 60) % 60; // Seconds to minutes
                 this.setting = zone.iOverrideMode ? true : false;
@@ -109,10 +108,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         }
                     }
                 }));
+                this.switchToHome();
             }
 
 
             _cancel() {
+                this.switchToHome();
+            }
+
+            switchToHome() {
                 this.dispatchEvent(new CustomEvent('home', {
                     bubbles: true,
                     composed: true

@@ -167,11 +167,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             ready() {
                 super.ready();
-                window.addEventListener('showTimer', () => this._showTimer(event));
-                window.addEventListener('update-timer', () => this._updateTimer(event));
-                window.addEventListener('showTimers', () => this._clickTimersHandler(event));
-                window.addEventListener('boost-dialog', () => this._boostDialog(event));
-                window.addEventListener('home', () => this._clickHomeHandler(event));
+                window.addEventListener('showTimer', event => this._showTimer(event));
+                window.addEventListener('update-timer', event => this._updateTimer(event));
+                window.addEventListener('showTimers', event => this._clickTimersHandler(event));
+                window.addEventListener('boost-dialog', event => this._boostDialog(event));
+                window.addEventListener('home', event => this._clickHomeHandler(event));
             }
 
             _showTimer(event) {
@@ -260,12 +260,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 }
             }
 
-            _clickHomeHandler() {
+            _clickHomeHandler(event) {
                 this.page = 'home';
                 this.pagezone = this.page;
             }
 
-            _clickTimersHandler() {
+            _clickTimersHandler(event) {
                 this.page = 'timers';
                 this.pagezone = this.page;
                 this.$.timers.data = this.persistedData;
@@ -309,7 +309,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         ], require => {});
                     };
                 }
-                console.log("Page: " + page);
 
                 if (usingWebpack) {
                     loadModule();
