@@ -81,7 +81,7 @@
 
             </div>
         </div>
-        <my-app id="mainapp" hidden$="[[!signedIn]]" headers="[[headers]]" offline="[[offline]]" signed-in="[[signedIn]]"></my-app>
+        <my-app id="mainapp" hidden$="[[!signedIn]]" headers="[[headers]]" server-name="[[serverName]]" offline="[[offline]]" signed-in="[[signedIn]]"></my-app>
     </template>
     <script src="../bower_components/js-sha256/build/sha256.min.js"></script>
     <script>
@@ -91,12 +91,10 @@
             }
             static get properties() {
                 return {
-                    statusKnown: Object,
                     username: String,
                     password: String,
-                    userdata: Object,
                     headers: Object,
-                    signature: String,
+                    serverName: String,
                     remember: {
                         type: String,
                         value: 'on'
@@ -170,6 +168,8 @@
                     }
                     localStorage.setItem("credentials", btoa(JSON.stringify(credentials)));
                     localStorage.setItem("signedIn", true);
+                    // Remember the serve name as this tends to change.
+                    this.serverName = "https://" + req.response.data.tunnel.server_name + "/v3/zones";
                     this.inProgress = false;
                     this.signedIn = !this.signedIn;
                 }, rejected => {

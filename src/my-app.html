@@ -21,7 +21,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.html">
+<link rel="import" href="../bower_components/app-storage/app-localstorage/app-localstorage-document.html">
 <link rel="import" href="my-icons.html">
 <link rel="import" href="title-card.html">
 <link rel="import" href="zone-menu.html">
@@ -76,11 +78,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 font-weight: bold;
             }
         </style>
-        <iron-ajax id="main" auto url="[[url]]" headers="[[headers]]" handle-as="json" on-response="handleResponse"></iron-ajax>
+        <iron-ajax id="main" auto url="[[serverName]]" headers="[[headers]]" handle-as="json" on-response="handleResponse" on-error="handleError"></iron-ajax>
         <iron-ajax id="update" headers="[[headers]]" method="PATCH" handle-as="json" on-response="handleUpdate"></iron-ajax>
-        <app-indexeddb-mirror key="zones" data="[[liveData]]" persisted-data="{{persistedData}}"></app-indexeddb-mirror>
-        <app-indexeddb-mirror key="wholehouse" data="[[liveWholeHouse]]" persisted-data="{{persistedWholeHouse}}"></app-indexeddb-mirror>
-
+        <app-indexeddb-mirror id="zones" key="zones" data="{{liveData}}" persisted-data="{{persistedData}}"></app-indexeddb-mirror>
+        <app-indexeddb-mirror id="wholehouse" key="wholehouse" data="{{liveWholeHouse}}" persisted-data="{{persistedWholeHouse}}"></app-indexeddb-mirror>
         <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
         </app-location>
 
@@ -111,15 +112,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         <title-card data="[[persistedWholeHouse]]"></title-card>
                     </app-toolbar>
                 </app-header>
-                <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="main" role="main">
-                    <popup-zone name="timer" id="timer" data="[]"></popup-zone>
-                    <boost-dialog name="boost" id="boost" data="[]"></boost-dialog>
-                    <geniusmirror-app name="home" data="[[persistedData]]"></geniusmirror-app>
-                    <all-timers id="timers" name="timers"></all-timers>
-                </iron-pages>
+                <div id="mainpage">
+                    <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="main" role="main">
+                        <popup-zone name="timer" id="timer" data="[]"></popup-zone>
+                        <boost-dialog name="boost" id="boost" data="[]"></boost-dialog>
+                        <geniusmirror-app name="home" data="[[persistedData]]"></geniusmirror-app>
+                        <all-timers id="timers" name="timers"></all-timers>
+                    </iron-pages>
+                </div>
 
             </app-header-layout>
         </app-drawer-layout>
+        <paper-toast id="toast" duration="5000" text="Unable to contact hub. Stale data is being displayed"></paper-toast>
     </template>
 
     <script>
@@ -136,28 +140,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     persistedWholeHouse: Object,
                     liveData: Object,
                     liveWholeHouse: Object,
-                    initialized: Object,
+                    serverName: String,
                     page: {
                         type: String,
                         reflectToAttribute: true,
                         observer: '_pageChanged',
                     },
-                    pagezone: {
-                        type: String,
-                        reflectToAttribute: true,
-                        observer: '_pageChanged',
-                    },
+                    pagezone: String,
                     routeData: Object,
                     subroute: String,
                     // This shouldn't be neccessary, but the Analyzer isn't picking up
                     // Polymer.Element#rootPath
-                    url: {
-                        type: String,
-                        value: "https://hub-server-1.heatgenius.co.uk/v3/zones" // Remote
-                        // value: "http://[[your.local.ip.address]]:1223/v3/zones" // Local
-                    },
-                    headers: Object,
                     rootPath: String,
+                    headers: Object,
                     zoneId: String,
                     timer: Object
                 };
@@ -189,7 +184,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             _updateTimer(event) {
                 let ajax = this.$.update;
                 this.zoneId = event.detail.addr;
-                ajax.url = 'https://hub-server-1.heatgenius.co.uk/v3/zone/' + event.detail.addr; // Remote
+                ajax.url = this.serverName.slice(0, -1) + '/' + event.detail.addr; // Remote
                 // ajax.url = 'http://[[your.local.ip.address]]:1223/v3/zone/' + event.detail.addr; // Local
                 ajax.body = JSON.stringify(event.detail.data);
                 ajax.generateRequest();
@@ -197,7 +192,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             handleUpdate(event) {
                 // Refresh main data
                 this.$.main.generateRequest();
-                console.log("Fetch data");
             }
 
             _boostDialog(event) {
@@ -205,6 +199,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.zoneId = event.detail.iID;
                 this.pagezone = event.detail.strName;
                 this.page = "boost";
+            }
+
+            handleError(e) {
+                // We failed to contact the hub... lets retrive the data from the mirrored DB
+                const promises = [];
+                promises.push(this.$.zones.getStoredValue("zones"));
+                promises.push(this.$.wholehouse.getStoredValue("wholehouse"));
+
+                const all = Promise.all(promises);
+                all.then(results => {
+                    this.persistedData = results[0];
+                    this.persistedWholeHouse = results[1];
+                });
+                this.$.toast.fitInto = this.$.mainpage;
+                this.$.toast.open();
+                this.startTimer();
             }
 
             handleResponse(e) {
@@ -240,6 +250,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     }));
                 }
 
+                this.startTimer();
+            }
+
+            startTimer() {
                 // Set up a timer to retrive data from the hub every 10 seconds
                 if (this.timer == undefined) {
                     this.timer = setInterval(() => this.handleUpdate(), 10 * 1000);
@@ -295,6 +309,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         ], require => {});
                     };
                 }
+                console.log("Page: " + page);
 
                 if (usingWebpack) {
                     loadModule();

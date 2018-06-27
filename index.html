@@ -83,28 +83,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <!-- Load your application shell -->
     <link rel="import" href="src/my-login.html">
-    <script>
-        (function () {
-            'use strict';
 
-            if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
-                return;
-            }
-
-            window.ga = window.ga || function () {
-                (ga.q = ga.q || []).push(arguments)
-            };
-            ga.l = +new Date;
-
-            window.addEventListener('anchorChanged', function (e) {
-                ga('set', 'page', e.detail.anchor);
-                ga('send', 'pageview');
-            });
-
-            ga('create', 'UA-109693055-1', 'auto');
-            ga('send', 'pageview');
-        })();
-    </script>
     <!-- Add any global styles for body, document, etc. -->
     <style>
         body {
@@ -119,7 +98,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <body>
     <my-login></my-login>
-    <script src="https://www.google-analytics.com/analytics.js" async></script>
     <noscript>
         Please enable JavaScript to view this website.
     </noscript>
