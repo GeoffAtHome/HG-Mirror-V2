@@ -47,8 +47,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             paper-icon-button.on {
-                color: black;
                 --paper-icon-button-ink-color: pink;
+                color: black;
             }
 
             paper-icon-button.on:hover {
@@ -111,6 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 if (zone.iMode === 1 || zone.iMode === 8) {
                     return 'on';
                 }
+                return 'off';
             }
 
 
@@ -118,19 +119,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 if (zone.iMode === 2) {
                     return 'on';
                 }
-
+                return 'off';
             }
 
             isFootprint(zone) {
                 if (zone.iMode === 4) {
                     return 'on';
                 }
+                return 'off';
             }
 
             isBoost(zone) {
                 if (zone.iMode === 16) {
                     return 'on';
                 }
+                return 'off';
             }
 
             _boost(event) {
