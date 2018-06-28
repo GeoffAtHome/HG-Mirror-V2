@@ -1,9 +1,8 @@
 {
-  "name": "My App",
-  "short_name": "My App",
-  "description": "My App description",
-  "icons": [
-    {
+  "name": "Genius Mirror",
+  "short_name": "Genius Mirror",
+  "description": "Genius Hub Mirror",
+  "icons": [{
       "src": "images/manifest/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
