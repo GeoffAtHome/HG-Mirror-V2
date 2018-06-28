@@ -82,23 +82,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-ajax id="update" headers="[[headers]]" method="PATCH" handle-as="json" on-response="handleUpdate"></iron-ajax>
         <app-indexeddb-mirror id="zones" key="zones" data="{{liveData}}" persisted-data="{{persistedData}}"></app-indexeddb-mirror>
         <app-indexeddb-mirror id="wholehouse" key="wholehouse" data="{{liveWholeHouse}}" persisted-data="{{persistedWholeHouse}}"></app-indexeddb-mirror>
-        <app-location route="{{route}}" url-space-regex="^[[rootPath]]">
-        </app-location>
-
-        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}">
-        </app-route>
+        <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
+        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
 
         <app-drawer-layout fullbleed narrow="{{narrow}}">
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
                 <app-toolbar>Menu</app-toolbar>
                 <iron-selector selected="[[pagezone]]" attr-for-selected="name" class="drawer-list" role="navigation">
-                    <div class="menuitem" name="home" on-click="_clickHomeHandler">Home</div>
+                    <a class="menuitem" name="home" href="[[rootPath]]home">Home</a>
                     <template is="dom-repeat" items="[[persistedData]]" as="zone">
+
                         <zone-menu name="[[zone.strName]]" zone="[[zone]]"></zone-menu>
                         <br>
                     </template>
-                    <div class="menuitem" name="timers" on-click="_clickTimersHandler">All timers</div>
+                    <a class="menuitem" name="timers" href="[[rootPath]]timers">All timers</a>
                     <div class="menuitem" name="logout" on-click="_logout">Logout</div>
                 </iron-selector>
             </app-drawer>
@@ -153,7 +151,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     // Polymer.Element#rootPath
                     rootPath: String,
                     headers: Object,
-                    zoneId: String,
                     timer: Object
                 };
             }
@@ -167,28 +164,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             ready() {
                 super.ready();
-                window.addEventListener('showTimer', event => this._showTimer(event));
                 window.addEventListener('update-timer', event => this._updateTimer(event));
-                window.addEventListener('showTimers', event => this._clickTimersHandler(event));
                 window.addEventListener('boost-dialog', event => this._boostDialog(event));
                 window.addEventListener('home', event => this._clickHomeHandler(event));
             }
 
-            _showTimer(event) {
-                this.$.timer.zone = event.detail;
-                this.zoneId = event.detail.iID;
-                this.pagezone = event.detail.strName;
-                this.page = "timer";
-            }
-
             _updateTimer(event) {
                 let ajax = this.$.update;
-                this.zoneId = event.detail.addr;
                 ajax.url = this.serverName.slice(0, -1) + '/' + event.detail.addr; // Remote
                 // ajax.url = 'http://[[your.local.ip.address]]:1223/v3/zone/' + event.detail.addr; // Local
                 ajax.body = JSON.stringify(event.detail.data);
                 ajax.generateRequest();
             }
+
             handleUpdate(event) {
                 // Refresh main data
                 this.$.main.generateRequest();
@@ -196,7 +184,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             _boostDialog(event) {
                 this.$.boost.zone = event.detail;
-                this.zoneId = event.detail.iID;
                 this.pagezone = event.detail.strName;
                 this.page = "boost";
             }
@@ -226,30 +213,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.liveWholeHouse = data.shift();
                 this.liveData = data;
 
-                // Are we on the timer page?
-                if (this.page == "timer") {
-                    // Yep - find the zone and update the timer
-                    let zone = this.liveData.filter(item => item.iID === this.zoneId)[0];
-                    this.dispatchEvent(new CustomEvent('showTimer', {
-                        bubbles: true,
-                        composed: true,
-                        detail: zone
-                    }));
-                } else if (this.page == "boost") {
-                    // Yep - find the zone and update the timer
-                    let zone = this.liveData.filter(item => item.iID === this.zoneId)[0];
-                    this.dispatchEvent(new CustomEvent('boost-dialog', {
-                        bubbles: true,
-                        composed: true,
-                        detail: zone
-                    }));
-                } else if (this.page == "timers") {
-                    this.dispatchEvent(new CustomEvent('showTimers', {
-                        bubbles: true,
-                        composed: true
-                    }));
-                }
-
                 this.startTimer();
             }
 
@@ -265,17 +228,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.pagezone = this.page;
             }
 
-            _clickTimersHandler(event) {
-                this.page = 'timers';
-                this.pagezone = this.page;
-                this.$.timers.data = this.persistedData;
-            }
-
             _routePageChanged(page) {
                 // If no page was found in the route data, page will be an empty string.
                 // Default to 'view1' in that case.
                 this.page = page || 'home';
                 this.pagezone = this.page;
+
+                if (this.persistedData !== undefined) {
+
+                    if (this.page === 'timer') {
+                        let zoneId = parseInt(this.subroute.path.slice(1));
+                        let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
+                        this.zone = zone;
+                        this.pagezone = zone.strName;
+                        this.$.timer.zone = zone;
+                    } else if (this.page === 'timers') {
+                        this.$.timers.data = this.persistedData;
+                    } else {
+                        this.zone = null;
+                    }
+                } else {
+                    // No data so stay at home
+                    this.page = 'home';
+                    this.pagezone = this.page;
+                }
 
                 // Close a non-persistent drawer when the page & route are changed.
                 if (!this.$.drawer.persistent) {

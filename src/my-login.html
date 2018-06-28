@@ -135,8 +135,11 @@
             }
 
             _switchToApp() {
-                const credentials = JSON.parse(atob(localStorage.getItem("credentials")));
-                this.signIn(credentials.username, credentials.password);
+                const credentialsText = localStorage.getItem("credentials");
+                if (credentialsText !== null && credentialsText !== "") {
+                    const credentials = JSON.parse(atob(credentialsText));
+                    this.signIn(credentials.username, credentials.password);
+                }
             }
             signIn(username, password) {
                 this.inProgress = true;

@@ -64,7 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             getData(zone) {
-                if (zone !== undefined) {
+                if (zone !== undefined && zone !== null) {
                     const d = new Date();
                     const tz = d.getTimezoneOffset() * 60 * 1000;
                     const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];

@@ -29,14 +29,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 height: 100%;
             }
         </style>
-        <div class="card" on-click="clickHandler">
-            <zone-header zone="[[zone]]" on$="[[getZoneState(zone.bOutRequestHeat)]]"></zone-header>
-            <div class="layout vertical start">
-                <template is="dom-repeat" items="[[zone.nodes]]" as="node" sort="_sort">
-                    <device-card node="[[node]]" on="[[zone.bIsActive]]" data="[[getDeviceData(node)]]"></device-card>
-                </template>
+        <a href="/timer/[[zone.iID]]">
+            <div class="card">
+                <zone-header zone="[[zone]]" on$="[[getZoneState(zone.bOutRequestHeat)]]"></zone-header>
+                <div class="layout vertical start">
+                    <template is="dom-repeat" items="[[zone.nodes]]" as="node" sort="_sort">
+                        <device-card node="[[node]]" on="[[zone.bIsActive]]" data="[[getDeviceData(node)]]"></device-card>
+                    </template>
+                </div>
             </div>
-        </div>
+        </a>
     </template>
 
     <script>
@@ -60,14 +62,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 const path = node.childValues.location.path;
                 const data = this.zone.datapoints.filter(x => x.path === path);
                 return data;
-            }
-
-            clickHandler(event) {
-                this.dispatchEvent(new CustomEvent('showTimer', {
-                    bubbles: true,
-                    composed: true,
-                    detail: this.zone
-                }));
             }
 
             _sort(a, b) {

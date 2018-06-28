@@ -19,7 +19,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 display: inline-block;
             }
         </style>
-        <div class="menuitem" on-click="clickHandler">[[zone.strName]]</div>
+        <a class="menuitem" name$="[[zone.strName]]" href="/timer/[[zone.iID]]">[[zone.strName]]</a>
     </template>
 
     <script>
@@ -33,14 +33,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     zone: Object,
                     name: String
                 };
-            }
-            clickHandler() {
-                const event = new CustomEvent('showTimer', {
-                    bubbles: true,
-                    composed: true,
-                    detail: this.zone
-                });
-                this.dispatchEvent(event);
             }
         }
 
