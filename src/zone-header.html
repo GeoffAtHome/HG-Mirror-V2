@@ -39,6 +39,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 padding: 1px;
                 width: 28px;
                 height: 28px;
+                bottom: 3px;
+                color: white;
             }
 
             paper-icon-button:hover {
@@ -58,11 +60,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </style>
         <div class="layout horizontal justified top">
             <div class="layout horizontal layout-start">
-                <paper-icon-button class$="[[isOff(zone)]]" title="Off" icon="my-icons:off" on-click="_off"></paper-icon-button>
-                <paper-icon-button class$="[[isBoost(zone)]]" title="Boost" icon="my-icons:boost" on-click="_boost"></paper-icon-button>
-                <paper-icon-button class$="[[isTimer(zone)]]" title="Timer" icon="my-icons:timer" on-click="_timer"></paper-icon-button>
+                <a href="/home/[[zone.iID]]/off">
+                    <paper-icon-button class$="[[isOff(zone)]]" title="Off" icon="my-icons:off"></paper-icon-button>
+                </a>
+                <a href="/boost/[[zone.iID]]">
+                    <paper-icon-button class$="[[isBoost(zone)]]" title="Boost" icon="my-icons:boost"></paper-icon-button>
+                </a>
+                <a href="/home/[[zone.iID]]/timer">
+                    <paper-icon-button class$="[[isTimer(zone)]]" title="Timer" icon="my-icons:timer"></paper-icon-button>
+                </a>
                 <template is="dom-if" if="[[isNotSwitch(zone)]]">
-                    <paper-icon-button class$="[[isFootprint(zone)]]" title="Footprint" icon="my-icons:footprint" on-click="_footprint"></paper-icon-button>
+                    <a href="/home/[[zone.iID]]/footprint">
+                        <paper-icon-button class$="[[isFootprint(zone)]]" title="Footprint" icon="my-icons:footprint"></paper-icon-button>
+                    </a>
                 </template>
             </div>
             <span>[[zone.strName]]</span>

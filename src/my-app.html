@@ -165,7 +165,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             ready() {
                 super.ready();
                 window.addEventListener('update-timer', event => this._updateTimer(event));
-                window.addEventListener('boost-dialog', event => this._boostDialog(event));
                 window.addEventListener('home', event => this._clickHomeHandler(event));
             }
 
@@ -180,12 +179,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             handleUpdate(event) {
                 // Refresh main data
                 this.$.main.generateRequest();
-            }
-
-            _boostDialog(event) {
-                this.$.boost.zone = event.detail;
-                this.pagezone = event.detail.strName;
-                this.page = "boost";
             }
 
             handleError(e) {
@@ -213,6 +206,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.liveWholeHouse = data.shift();
                 this.liveData = data;
 
+                // When we receive new data we need to update the appropriate page with the data
+                if (this.page === "timer" || this.page === "timers") {
+                    this._routePageChanged(this.page);
+                }
+
                 this.startTimer();
             }
 
@@ -225,7 +223,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             _clickHomeHandler(event) {
                 this.page = 'home';
-                this.pagezone = this.page;
             }
 
             _routePageChanged(page) {
@@ -238,14 +235,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                     if (this.page === 'timer') {
                         let zoneId = parseInt(this.subroute.path.slice(1));
-                        let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
-                        this.zone = zone;
-                        this.pagezone = zone.strName;
-                        this.$.timer.zone = zone;
+                        if (!isNaN(zoneId)) {
+                            let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
+                            this.pagezone = zone.strName;
+                            this.$.timer.zone = zone;
+                        }
+                    } else if (this.page === 'boost') {
+                        let zoneId = parseInt(this.subroute.path.slice(1));
+                        if (!isNaN(zoneId)) {
+                            let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
+                            this.pagezone = zone.strName;
+                            this.$.boost.zone = zone;
+                        }
                     } else if (this.page === 'timers') {
                         this.$.timers.data = this.persistedData;
-                    } else {
-                        this.zone = null;
+                    } else if (this.page === 'home' && this.subroute.path !== undefined) {
+                        const subpaths = this.subroute.path.slice(1).split('/');
+                        const zoneId = parseInt(subpaths[0]);
+                        const mode = subpaths[1];
+
+                        if (mode === 'off') {
+                            this._setMode(1, zoneId);
+                        } else if (mode === 'boost') {
+                            this._setMode(4, zoneId);
+                        } else if (mode === 'timer') {
+                            this._setMode(2, zoneId);
+                        } else if (mode === 'footprint') {
+                            this._setMode(4, zoneId);
+                        }
+                        // stop repeat actions
+                        this.subroute = {};
                     }
                 } else {
                     // No data so stay at home
@@ -259,6 +278,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 }
             }
 
+            _setMode(mode, zoneId) {
+                this.dispatchEvent(new CustomEvent('update-timer', {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        addr: zoneId,
+                        data: {
+                            iMode: mode
+                        }
+                    }
+                }));
+            }
             _pageChanged(page) {
                 let loadModule;
                 // Load page import on demand. Show 404 page if fails
