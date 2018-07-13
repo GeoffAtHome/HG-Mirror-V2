@@ -7,19 +7,23 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import {
+    PolymerElement
+} from "@polymer/polymer/polymer-element.js";
 
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-icon/iron-icon.js';
-import './my-icons.js';
-import './battery-level.js';
-import './temperature-level.js';
-import './last-seen.js';
-import './shared-styles.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
+import "@polymer/iron-icon/iron-icon.js";
+import "./my-icons.js";
+import "./battery-level.js";
+import "./temperature-level.js";
+import "./last-seen.js";
+import "./shared-styles.js";
+import {
+    html
+} from "@polymer/polymer/lib/utils/html-tag.js";
 class RadiatorDevice extends PolymerElement {
-  static get template() {
-    return html`
+    static get template() {
+        return html `
         <style include="iron-flex iron-flex-alignment shared-styles">
             :host {
                 display: inline-block;
@@ -33,37 +37,37 @@ class RadiatorDevice extends PolymerElement {
             <last-seen lastseen="[[lastseen]]"></last-seen>
         </div>
 `;
-  }
+    }
 
-  static get is() {
-      return 'radiator-device';
-  }
+    static get is() {
+        return "radiator-device";
+    }
 
-  static get properties() {
-      return {
-          on: Boolean,
-          node_id: String,
-          lastseen: Number,
-          data: Object
-      }
-  }
+    static get properties() {
+        return {
+            data: Object,
+            lastseen: Number,
+            node_id: String,
+            on: Boolean,
+        };
+    }
 
-  handleResponse(e) {
-      let result = e.detail.response.data;
-      // Format the response
-      let x = result.sort((a, b) => a.iPriority - b.iPriority);
-      // Remove the whole house zone
-      x.shift();
-      this.data = x;
-  }
+    handleResponse(e) {
+        let result = e.detail.response.data;
+        // Format the response
+        let x = result.sort((a, b) => a.iPriority - b.iPriority);
+        // Remove the whole house zone
+        x.shift();
+        this.data = x;
+    }
 
-  getRadiatorState(value) {
-      if (value !== undefined) {
-          if (value) {
-              return "on";
-          }
-      }
-  }
+    getRadiatorState(value) {
+        if (value !== undefined) {
+            if (value) {
+                return "on";
+            }
+        }
+    }
 }
 
 window.customElements.define(RadiatorDevice.is, RadiatorDevice);

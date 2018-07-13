@@ -9,14 +9,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 import {
     PolymerElement
-} from '@polymer/polymer/polymer-element.js';
+} from "@polymer/polymer/polymer-element.js";
 
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-// import '../node_modules/google-charts/googleCharts.js';
-import './shared-styles.js';
+import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
+import {
+    GoogleCharts
+} from "google-charts";
+import "./shared-styles.js";
 import {
     html
-} from '@polymer/polymer/lib/utils/html-tag.js';
+} from "@polymer/polymer/lib/utils/html-tag.js";
 class TimeZone extends PolymerElement {
     static get template() {
         return html `
@@ -36,36 +38,49 @@ class TimeZone extends PolymerElement {
                 height: 350px;
             }
         </style>
+        <div id="chart" chartdata="[[getData(zone)]]"></div
         <google-chart type="timeline" options="[[options]]" data="[[getData(zone)]]"></google-chart>
 `;
     }
 
     static get is() {
-        return 'time-zone';
+        return "time-zone";
     }
 
-    /**
-     * Object describing property-related metadata used by Polymer features
-     */
+    ready() {
+            GoogleCharts.load(this.drawChart, "timeline");
+        }
+        /**
+         * Object describing property-related metadata used by Polymer features
+         */
     static get properties() {
         return {
-            zone: Object,
             _file: Object,
+            chartdata: Array,
+            hidden: {
+                reflectToAttribute: true,
+                type: Boolean,
+                value: false,
+            },
             options: {
                 type: Object,
                 value: {
                     tooltip: {
-                        isHtml: false
-                    }
-                }
+                        isHtml: false,
+                    },
+                },
             },
-            hidden: {
-                type: Boolean,
-                reflectToAttribute: true,
-                value: false
-            }
+            zone: Object,
         };
     }
+
+    drawChart() {
+        if (this !== undefined) {
+            const geo_1_chart = new GoogleCharts.api.visualization.GeoChart(this.$.chart);
+            geo_1_chart.draw(this.chartdata, this.options);
+        }
+    }
+
 
     getData(zone) {
         if (zone !== undefined && zone !== null) {
@@ -77,7 +92,7 @@ class TimeZone extends PolymerElement {
 
             results.push([days[0], this.getText(1), new Date(0 + tz), new Date(0 + tz)]);
             for (let day = 0; day < 7; day++) {
-                let today = data.filter(item => item.iDay == day)
+                let today = data.filter(item => item.iDay === day)
                 let lastTime = 0;
                 let setPoint = 0;
                 for (let key of Object.keys(today)) {
@@ -86,7 +101,7 @@ class TimeZone extends PolymerElement {
                         results.push([days[day], this.getText(setPoint), new Date((lastTime * 1000) +
                             tz), new Date(
                             (event.iTm * 1000) + tz)]);
-                    } else {}
+                    }
                     setPoint = event.fSP;
                     lastTime = event.iTm;
                 }
@@ -103,7 +118,7 @@ class TimeZone extends PolymerElement {
 
     getText(setPoint) {
         if (this.zone.nodes[0].childValues["SwitchBinary"] !== undefined) {
-            if (setPoint == 0) {
+            if (setPoint === 0) {
                 return "Off";
             } else {
                 return "On";

@@ -9,34 +9,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 import {
     PolymerElement
-} from '@polymer/polymer/polymer-element.js';
+} from "@polymer/polymer/polymer-element.js";
 
-import '@polymer/app-layout/app-drawer/app-drawer.js';
-import '@polymer/app-layout/app-drawer-layout/app-drawer-layout.js';
-import '@polymer/app-layout/app-header/app-header.js';
-import '@polymer/app-layout/app-header-layout/app-header-layout.js';
-import '@polymer/app-layout/app-scroll-effects/app-scroll-effects.js';
-import '@polymer/app-layout/app-toolbar/app-toolbar.js';
-import '@polymer/app-route/app-location.js';
-import '@polymer/app-route/app-route.js';
-import '@polymer/iron-pages/iron-pages.js';
-import '@polymer/iron-selector/iron-selector.js';
-import '@polymer/iron-ajax/iron-ajax.js';
-import '@polymer/paper-icon-button/paper-icon-button.js';
-import '@polymer/paper-toast/paper-toast.js';
-import '@polymer/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.js';
-import '@polymer/app-storage/app-localstorage/app-localstorage-document.js';
-import './my-icons.js';
-import './title-card.js';
-import './zone-menu.js';
-import './shared-styles.js';
-import './all-timers.js';
-import './popup-zone.js';
-import './boost-dialog.js';
-import './geniusmirror-app.js';
+import "@polymer/app-layout/app-drawer/app-drawer.js";
+import "@polymer/app-layout/app-drawer-layout/app-drawer-layout.js";
+import "@polymer/app-layout/app-header/app-header.js";
+import "@polymer/app-layout/app-header-layout/app-header-layout.js";
+import "@polymer/app-layout/app-scroll-effects/app-scroll-effects.js";
+import "@polymer/app-layout/app-toolbar/app-toolbar.js";
+import "@polymer/app-route/app-location.js";
+import "@polymer/app-route/app-route.js";
+import "@polymer/iron-pages/iron-pages.js";
+import "@polymer/iron-selector/iron-selector.js";
+import "@polymer/iron-ajax/iron-ajax.js";
+import "@polymer/paper-icon-button/paper-icon-button.js";
+import "@polymer/paper-toast/paper-toast.js";
+import "@polymer/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.js";
+import "@polymer/app-storage/app-localstorage/app-localstorage-document.js";
+import "./my-icons.js";
+import "./title-card.js";
+import "./zone-menu.js";
+import "./shared-styles.js";
+import "./all-timers.js";
+import "./popup-zone.js";
+import "./boost-dialog.js";
+import "./geniusmirror-app.js";
 import {
     html
-} from '@polymer/polymer/lib/utils/html-tag.js';
+} from "@polymer/polymer/lib/utils/html-tag.js";
 class MyApp extends PolymerElement {
     static get template() {
         return html `
@@ -106,7 +106,7 @@ class MyApp extends PolymerElement {
             </app-drawer>
 
             <!-- Main content -->
-            <app-header-layout has-scrolling-region="">
+            <app-header-layout id="header" has-scrolling-region="">
 
                 <app-header slot="header" condenses="" reveals="" effects="waterfall">
                     <app-toolbar>
@@ -130,51 +130,50 @@ class MyApp extends PolymerElement {
     }
 
     static get is() {
-        return 'my-app';
+        return "my-app";
     }
 
     static get properties() {
         return {
-            offline: Boolean,
-            signedIn: Boolean,
-            persistedData: Object,
-            persistedWholeHouse: Object,
+            headers: Object,
             liveData: Object,
             liveWholeHouse: Object,
-            serverName: String,
+            offline: Boolean,
             page: {
-                type: String,
+                observer: "_pageChanged",
                 reflectToAttribute: true,
-                observer: '_pageChanged',
+                type: String,
             },
             pagezone: String,
-            routeData: Object,
-            subroute: String,
-            // This shouldn't be neccessary, but the Analyzer isn't picking up
-            // Polymer.Element#rootPath
+            persistedData: Object,
+            persistedWholeHouse: Object,
             rootPath: String,
-            headers: Object,
-            timer: Object
+            routeData: Object,
+            serverName: String,
+            signedIn: Boolean,
+            subroute: String,
+            // This shouldn"t be neccessary, but the Analyzer isn"t picking up
+            // Polymer.Element#rootPath
+            timer: Object,
         };
     }
 
     static get observers() {
         return [
-            '_routePageChanged(routeData.page)',
+            "_routePageChanged(routeData.page)",
         ];
     }
 
-
     ready() {
         super.ready();
-        window.addEventListener('update-timer', event => this._updateTimer(event));
-        window.addEventListener('home', event => this._clickHomeHandler(event));
+        window.addEventListener("update-timer", event => this._updateTimer(event));
+        window.addEventListener("home", event => this._clickHomeHandler(event));
     }
 
     _updateTimer(event) {
         let ajax = this.$.update;
-        ajax.url = this.serverName.slice(0, -1) + '/' + event.detail.addr; // Remote
-        // ajax.url = 'http://[[your.local.ip.address]]:1223/v3/zone/' + event.detail.addr; // Local
+        ajax.url = this.serverName.slice(0, -1) + "/" + event.detail.addr; // Remote
+        // ajax.url = "http://[[your.local.ip.address]]:1223/v3/zone/" + event.detail.addr; // Local
         ajax.body = JSON.stringify(event.detail.data);
         ajax.generateRequest();
     }
@@ -183,6 +182,11 @@ class MyApp extends PolymerElement {
         // Refresh main data
         this.$.main.generateRequest();
     }
+
+    resizeHeader() {
+        this.$.header.fire("iron-resize");
+    }
+
 
     handleError(e) {
         // We failed to contact the hub... lets retrive the data from the mirrored DB
@@ -219,51 +223,51 @@ class MyApp extends PolymerElement {
 
     startTimer() {
         // Set up a timer to retrive data from the hub every 10 seconds
-        if (this.timer == undefined) {
+        if (this.timer === undefined) {
             this.timer = setInterval(() => this.handleUpdate(), 10 * 1000);
         }
     }
 
     _clickHomeHandler(event) {
-        this.page = 'home';
+        this.page = "home";
     }
 
     _routePageChanged(page) {
         // If no page was found in the route data, page will be an empty string.
-        // Default to 'view1' in that case.
-        this.page = page || 'home';
+        // Default to "view1" in that case.
+        this.page = page || "home";
         this.pagezone = this.page;
 
         if (this.persistedData !== undefined) {
 
-            if (this.page === 'timer') {
+            if (this.page === "timer") {
                 let zoneId = parseInt(this.subroute.path.slice(1));
                 if (!isNaN(zoneId)) {
                     let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
                     this.pagezone = zone.strName;
                     this.$.timer.zone = zone;
                 }
-            } else if (this.page === 'boost') {
+            } else if (this.page === "boost") {
                 let zoneId = parseInt(this.subroute.path.slice(1));
                 if (!isNaN(zoneId)) {
                     let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
                     this.pagezone = zone.strName;
                     this.$.boost.zone = zone;
                 }
-            } else if (this.page === 'timers') {
+            } else if (this.page === "timers") {
                 this.$.timers.data = this.persistedData;
-            } else if (this.page === 'home' && this.subroute.path !== undefined) {
-                const subpaths = this.subroute.path.slice(1).split('/');
+            } else if (this.page === "home" && this.subroute.path !== undefined) {
+                const subpaths = this.subroute.path.slice(1).split("/");
                 const zoneId = parseInt(subpaths[0]);
                 const mode = subpaths[1];
 
-                if (mode === 'off') {
+                if (mode === "off") {
                     this._setMode(1, zoneId);
-                } else if (mode === 'boost') {
+                } else if (mode === "boost") {
                     this._setMode(4, zoneId);
-                } else if (mode === 'timer') {
+                } else if (mode === "timer") {
                     this._setMode(2, zoneId);
-                } else if (mode === 'footprint') {
+                } else if (mode === "footprint") {
                     this._setMode(4, zoneId);
                 }
                 // stop repeat actions
@@ -271,7 +275,7 @@ class MyApp extends PolymerElement {
             }
         } else {
             // No data so stay at home
-            this.page = 'home';
+            this.page = "home";
             this.pagezone = this.page;
         }
 
@@ -282,58 +286,36 @@ class MyApp extends PolymerElement {
     }
 
     _setMode(mode, zoneId) {
-        this.dispatchEvent(new CustomEvent('update-timer', {
+        this.dispatchEvent(new CustomEvent("update-timer", {
             bubbles: true,
-            composed: true,
             detail: {
                 addr: zoneId,
                 data: {
-                    iMode: mode
-                }
-            }
+                    iMode: mode,
+                },
+            },
         }));
     }
     _pageChanged(page) {
-        let loadModule;
         // Load page import on demand. Show 404 page if fails
-        if (page === 'home') {
-            page = './geniusmirror-app.js';
-            loadModule = function () {
-                require([ /* webpackChunkName: "geniusmirror-app" */
-                    './geniusmirror-app.html'
-                ], require => {});
-            };
-
-        } else if (page === 'boost') {
-            page = './boost-dialog.js';
-            loadModule = function () {
-                require([ /* webpackChunkName: "popup-zone" */
-                    './boost-dialog.html'
-                ], require => {});
-            };
+        if (page === "home") {
+            page = "./geniusmirror-app.js";
+        } else if (page === "boost") {
+            page = "./boost-dialog.js";
         } else {
-            page = './popup-zone.js';
-            loadModule = function () {
-                require([ /* webpackChunkName: "popup-zone" */
-                    './popup-zone.html'
-                ], require => {});
-            };
+            page = "./popup-zone.js";
         }
 
-        if (usingWebpack) {
-            loadModule();
-        } else {
-            import (page).then(null, this._showPage404.bind(this));
-        }
+        import (page).then(null, this._showPage404.bind(this));
     }
     _logout() {
-        this.dispatchEvent(new CustomEvent('log-out', {
+        this.dispatchEvent(new CustomEvent("log-out", {
             bubbles: true,
             composed: true,
         }));
     }
     _showPage404() {
-        this.page = 'view404';
+        this.page = "view404";
     }
 }
 

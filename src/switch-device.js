@@ -7,16 +7,20 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
-import { PolymerElement } from '@polymer/polymer/polymer-element.js';
+import {
+    PolymerElement
+} from "@polymer/polymer/polymer-element.js";
 
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/iron-icon/iron-icon.js';
-import './my-icons.js';
-import './shared-styles.js';
-import { html } from '@polymer/polymer/lib/utils/html-tag.js';
+import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
+import "@polymer/iron-icon/iron-icon.js";
+import "./my-icons.js";
+import "./shared-styles.js";
+import {
+    html
+} from "@polymer/polymer/lib/utils/html-tag.js";
 class SwitchDevice extends PolymerElement {
-  static get template() {
-    return html`
+    static get template() {
+        return html `
         <style include="shared-styles iron-flex iron-flex-alignment ">
             :host {
                 display: inline-block;
@@ -29,29 +33,29 @@ class SwitchDevice extends PolymerElement {
         </style>
         <span>[[getState(data)]]</span>
 `;
-  }
+    }
 
-  static get is() {
-      return 'switch-device';
-  }
+    static get is() {
+        return "switch-device";
+    }
 
-  static get properties() {
-      return {
-          node_id: String,
-          state: String,
-          data: Object
-      }
-  }
+    static get properties() {
+        return {
+            data: Object,
+            node_id: String,
+            state: String,
+        };
+    }
 
-  getState(data) {
-      const value = data[0].val;
-      if (value != undefined) {
-          if (value === 1) {
-              return 'ON';
-          }
-          return 'OFF'
-      }
-  }
+    getState(data) {
+        const value = data[0].val;
+        if (value !== undefined) {
+            if (value === 1) {
+                return "ON";
+            }
+            return "OFF";
+        }
+    }
 }
 
 window.customElements.define(SwitchDevice.is, SwitchDevice);

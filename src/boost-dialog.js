@@ -9,18 +9,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 import {
     PolymerElement
-} from '@polymer/polymer/polymer-element.js';
+} from "@polymer/polymer/polymer-element.js";
 
-import '@polymer/iron-flex-layout/iron-flex-layout-classes.js';
-import '@polymer/paper-toggle-button/paper-toggle-button.js';
-// import '../node_modules/paper-duration-input/paper-duration-input.js';
-import '@polymer/paper-fab/paper-fab.js';
-import './time-zone.js';
-import './my-icons.js';
-import './shared-styles.js';
+import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
+import "@polymer/paper-toggle-button/paper-toggle-button.js";
+// import "../node_modules/paper-duration-input/paper-duration-input.js";
+import "@polymer/paper-fab/paper-fab.js";
+import "./time-zone.js";
+import "./my-icons.js";
+import "./shared-styles.js";
 import {
     html
-} from '@polymer/polymer/lib/utils/html-tag.js';
+} from "@polymer/polymer/lib/utils/html-tag.js";
 class BoostDialog extends PolymerElement {
     static get template() {
         return html `
@@ -74,7 +74,7 @@ class BoostDialog extends PolymerElement {
     }
 
     static get is() {
-        return 'boost-dialog';
+        return "boost-dialog";
     }
 
     /**
@@ -82,13 +82,13 @@ class BoostDialog extends PolymerElement {
      */
     static get properties() {
         return {
-            zone: {
-                type: Object,
-                observer: '_zoneChanged',
-            },
-            setting: Boolean,
             hour: Number,
-            minute: Number
+            minute: Number,
+            setting: Boolean,
+            zone: {
+                observer: "_zoneChanged",
+                type: Object,
+            },
         };
     }
 
@@ -100,30 +100,27 @@ class BoostDialog extends PolymerElement {
 
 
     _OK() {
-        this.dispatchEvent(new CustomEvent('update-timer', {
+        this.dispatchEvent(new CustomEvent("update-timer", {
             bubbles: true,
-            composed: true,
             detail: {
                 addr: this.zone.iID,
                 data: {
-                    iMode: 16,
+                    fBoostSP: this.setting ? 1 : 0,
                     iBoostTimeRemaining: (this.hour * 60 + this.minute) * 60,
-                    fBoostSP: this.setting ? 1 : 0
-                }
-            }
+                    iMode: 16,
+                },
+            },
         }));
         this.switchToHome();
     }
-
 
     _cancel() {
         this.switchToHome();
     }
 
     switchToHome() {
-        this.dispatchEvent(new CustomEvent('home', {
+        this.dispatchEvent(new CustomEvent("home", {
             bubbles: true,
-            composed: true
         }));
     }
 }
