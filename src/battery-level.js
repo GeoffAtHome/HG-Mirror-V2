@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 import {
-    PolymerElement
+    PolymerElement,
 } from "@polymer/polymer/polymer-element.js";
 
 import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
@@ -16,7 +16,7 @@ import "@polymer/iron-icon/iron-icon.js";
 import "./my-icons.js";
 import "./shared-styles.js";
 import {
-    html
+    html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
 class BatteryLevel extends PolymerElement {
     static get template() {

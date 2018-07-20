@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 import {
-    PolymerElement
+    PolymerElement,
 } from "@polymer/polymer/polymer-element.js";
 
 import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
@@ -16,9 +16,9 @@ import "@polymer/iron-icon/iron-icon.js";
 import "./my-icons.js";
 import "./shared-styles.js";
 import {
-    html
+    html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
-class lastSeen extends PolymerElement {
+class LastSeen extends PolymerElement {
     static get template() {
         return html `
         <style include="iron-flex iron-flex-alignment shared-styles">
@@ -89,4 +89,4 @@ class lastSeen extends PolymerElement {
     }
 }
 
-window.customElements.define(lastSeen.is, lastSeen);
+window.customElements.define(LastSeen.is, LastSeen);

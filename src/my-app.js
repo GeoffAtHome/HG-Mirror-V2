@@ -8,9 +8,8 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 import {
-    PolymerElement
+    PolymerElement,
 } from "@polymer/polymer/polymer-element.js";
-
 import "@polymer/app-layout/app-drawer/app-drawer.js";
 import "@polymer/app-layout/app-drawer-layout/app-drawer-layout.js";
 import "@polymer/app-layout/app-header/app-header.js";
@@ -24,18 +23,13 @@ import "@polymer/iron-selector/iron-selector.js";
 import "@polymer/iron-ajax/iron-ajax.js";
 import "@polymer/paper-icon-button/paper-icon-button.js";
 import "@polymer/paper-toast/paper-toast.js";
-import "@polymer/app-storage/app-indexeddb-mirror/app-indexeddb-mirror.js";
-import "@polymer/app-storage/app-localstorage/app-localstorage-document.js";
 import "./my-icons.js";
 import "./title-card.js";
 import "./zone-menu.js";
 import "./shared-styles.js";
 import "./all-timers.js";
-import "./popup-zone.js";
-import "./boost-dialog.js";
-import "./geniusmirror-app.js";
 import {
-    html
+    html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
 class MyApp extends PolymerElement {
     static get template() {
@@ -82,13 +76,13 @@ class MyApp extends PolymerElement {
                 font-weight: bold;
             }
         </style>
-        <iron-ajax id="main" auto="" url="[[serverName]]" headers="[[headers]]" handle-as="json" on-response="handleResponse" on-error="handleError"></iron-ajax>
-        <iron-ajax id="update" headers="[[headers]]" method="PATCH" handle-as="json" on-response="handleUpdate"></iron-ajax>
-        <app-indexeddb-mirror id="zones" key="zones" data="{{liveData}}" persisted-data="{{persistedData}}"></app-indexeddb-mirror>
-        <app-indexeddb-mirror id="wholehouse" key="wholehouse" data="{{liveWholeHouse}}" persisted-data="{{persistedWholeHouse}}"></app-indexeddb-mirror>
+        <iron-ajax id="main" auto="" url="[[serverName]]" headers="[[headers]]" handle-as="json"
+        on-response="handleResponse" on-error="handleError"></iron-ajax>
+        <iron-ajax id="update" headers="[[headers]]" method="PATCH" handle-as="json"
+         on-response="handleUpdate"></iron-ajax>
+
         <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
         <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
-
         <app-drawer-layout fullbleed="" narrow="{{narrow}}">
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
@@ -125,7 +119,8 @@ class MyApp extends PolymerElement {
 
             </app-header-layout>
         </app-drawer-layout>
-        <paper-toast id="toast" duration="5000" text="Unable to contact hub. Stale data is being displayed"></paper-toast>
+        <paper-toast id="toast" duration="5000" text="Unable to contact hub.
+         Stale data is being displayed"></paper-toast>
 `;
     }
 
@@ -136,8 +131,6 @@ class MyApp extends PolymerElement {
     static get properties() {
         return {
             headers: Object,
-            liveData: Object,
-            liveWholeHouse: Object,
             offline: Boolean,
             page: {
                 observer: "_pageChanged",
@@ -147,13 +140,10 @@ class MyApp extends PolymerElement {
             pagezone: String,
             persistedData: Object,
             persistedWholeHouse: Object,
-            rootPath: String,
             routeData: Object,
             serverName: String,
             signedIn: Boolean,
             subroute: String,
-            // This shouldn"t be neccessary, but the Analyzer isn"t picking up
-            // Polymer.Element#rootPath
             timer: Object,
         };
     }
@@ -173,7 +163,6 @@ class MyApp extends PolymerElement {
     _updateTimer(event) {
         let ajax = this.$.update;
         ajax.url = this.serverName.slice(0, -1) + "/" + event.detail.addr; // Remote
-        // ajax.url = "http://[[your.local.ip.address]]:1223/v3/zone/" + event.detail.addr; // Local
         ajax.body = JSON.stringify(event.detail.data);
         ajax.generateRequest();
     }
@@ -210,8 +199,8 @@ class MyApp extends PolymerElement {
         let data = result.sort((a, b) => a.iPriority - b.iPriority);
 
         // Remove the whole house zone
-        this.liveWholeHouse = data.shift();
-        this.liveData = data;
+        this.persistedWholeHouse = data.shift();
+        this.persistedData = data;
 
         // When we receive new data we need to update the appropriate page with the data
         if (this.page === "timer" || this.page === "timers") {
@@ -297,17 +286,19 @@ class MyApp extends PolymerElement {
         }));
     }
     _pageChanged(page) {
-        // Load page import on demand. Show 404 page if fails
-        if (page === "home") {
-            page = "./geniusmirror-app.js";
-        } else if (page === "boost") {
-            page = "./boost-dialog.js";
-        } else {
-            page = "./popup-zone.js";
+        switch (page) {
+        case "home":
+            import ("./geniusmirror-app.js");
+            break;
+        case "boost":
+            import ("./boost-dialog.js");
+            break;
+        default:
+            import ("./popup-zone.js");
+            break;
         }
-
-        import (page).then(null, this._showPage404.bind(this));
     }
+
     _logout() {
         this.dispatchEvent(new CustomEvent("log-out", {
             bubbles: true,

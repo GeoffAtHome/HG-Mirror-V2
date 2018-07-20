@@ -53,7 +53,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         /**
          * [polymer-root-path]
          *
-         * By default, we set `Polymer.rootPath` to the server root path (`/`).
          * Leave this line unchanged if you intend to serve your app from the root
          * path (e.g., with URLs like `my.domain/` and `my.domain/view1`).
          *
@@ -62,17 +61,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          * to indicate the path from which you'll be serving, including leading
          * and trailing slashes (e.g., `/my-app/`).
          */
-        window.Polymer = {
+        window.MyAppGlobals = {
             rootPath: '/'
         };
 
-        usingWebpack = false;
-
         // Load and register pre-caching Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 navigator.serviceWorker.register('service-worker.js', {
-                    scope: Polymer.rootPath,
+                    scope: MyAppGlobals.rootPath
                 });
             });
         }
@@ -88,7 +85,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
         body {
             margin: 0;
-            font-family: 'Roboto', 'Noto', sans-serif;
+            font-family: "Roboto", "Noto", sans-serif;
             line-height: 1.5;
             min-height: 100vh;
             background-color: #eeeeee;
@@ -101,6 +98,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <noscript>
         Please enable JavaScript to view this website.
     </noscript>
+    <!-- Built with love using Polymer Starter Kit -->
 </body>
 
 </html>

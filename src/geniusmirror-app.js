@@ -1,12 +1,12 @@
 import {
-    PolymerElement
+    PolymerElement,
 } from "@polymer/polymer/polymer-element.js";
 import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
 import "@polymer/paper-dialog/paper-dialog.js";
 import "@polymer/paper-dialog-scrollable/paper-dialog-scrollable.js";
 import "./zone-card.js";
 import {
-    html
+    html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
 /**
  * @customElement

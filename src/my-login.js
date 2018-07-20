@@ -1,7 +1,11 @@
 import {
     PolymerElement,
-    html
+    html,
 } from "@polymer/polymer/polymer-element.js";
+import {
+    setPassiveTouchGestures,
+    setRootPath,
+} from '@polymer/polymer/lib/utils/settings.js';
 import "@polymer/paper-input/paper-input.js";
 import "@polymer/paper-button/paper-button.js";
 import "@polymer/paper-icon-button/paper-icon-button.js";
@@ -10,8 +14,14 @@ import "@polymer/paper-checkbox/paper-checkbox.js";
 import "@polymer/iron-ajax/iron-ajax.js";
 import "./shared-styles.js";
 import "./my-icons.js";
-import "./my-app.js";
 import "../node_modules/js-sha256/src/sha256.js";
+// Gesture events like tap and track generated from touch will not be
+// preventable, allowing for better scrolling performance.
+setPassiveTouchGestures(true);
+
+// Set Polymer's root path to the same value we passed to our service worker
+// in `index.html`.
+setRootPath(MyAppGlobals.rootPath);
 class MyLogin extends PolymerElement {
     static get template() {
         return html `
@@ -136,15 +146,13 @@ class MyLogin extends PolymerElement {
         super.ready();
         window.addEventListener("log-out",
             () => this._logout());
-        this.offline = navigator.onLine === !1;
+        // this.offline = navigator.onLine === !1;
         window.addEventListener("online", () => this._online());
         window.addEventListener("offline", () => this._offline());
         window.addEventListener("switch", () => this._switchToApp());
         this.remember = localStorage.getItem("remember");
         if (localStorage.getItem("signedIn")) {
-            dispatchEvent(new CustomEvent("switch", {
-                bubbles: true,
-            }));
+            this._switchToApp();
         }
     }
 

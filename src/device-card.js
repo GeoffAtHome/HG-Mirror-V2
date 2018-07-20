@@ -8,7 +8,7 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 import {
-    PolymerElement
+    PolymerElement,
 } from "@polymer/polymer/polymer-element.js";
 
 import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
@@ -18,7 +18,7 @@ import "./switch-device.js";
 import "./sensor-device.js";
 import "./shared-styles.js";
 import {
-    html
+    html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
 class DeviceCard extends PolymerElement {
     static get template() {
