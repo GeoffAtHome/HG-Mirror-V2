@@ -156,6 +156,7 @@ class ZoneHeader extends PolymerElement {
     _boost(event) {
         this.dispatchEvent(new CustomEvent("boost-dialog", {
             bubbles: true,
+            composed: true,
             detail: this.zone,
         }));
         event.stopPropagation();
@@ -176,6 +177,7 @@ class ZoneHeader extends PolymerElement {
     changeMode(event, mode) {
         this.dispatchEvent(new CustomEvent("update-timer", {
             bubbles: true,
+            composed: true,
             detail: {
                 addr: this.zone.iID,
                 data: {

@@ -15,6 +15,7 @@ import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
 import "@polymer/paper-toggle-button/paper-toggle-button.js";
 // import "../node_modules/paper-duration-input/paper-duration-input.js";
 import "@polymer/paper-fab/paper-fab.js";
+import "@polymer/paper-input/paper-input.js";
 import "./time-zone.js";
 import "./my-icons.js";
 import "./shared-styles.js";
@@ -53,13 +54,17 @@ class BoostDialog extends PolymerElement {
                 top: 15px;
                 left: 230px;
             }
+            paper-input {
+                width: 20px;
+            }
         </style>
         <div class="panel">
             <h2>[[zone.strName]]</h2>
 
             <div class="layout horizontal justified">
                 <span>Override duration: </span>
-                <paper-duration-input hide-label="" hour="{{hour}}" min="{{minute}}"></paper-duration-input>
+                <paper-input value="{{hour}}"></paper-input>
+                <paper-input value="{{minute}}">:</paper-input>
             </div>
             <div class="layout horizontal justified">
                 <span>Override setting: </span>
@@ -102,6 +107,7 @@ class BoostDialog extends PolymerElement {
     _OK() {
         this.dispatchEvent(new CustomEvent("update-timer", {
             bubbles: true,
+            composed: true,
             detail: {
                 addr: this.zone.iID,
                 data: {
@@ -121,6 +127,7 @@ class BoostDialog extends PolymerElement {
     switchToHome() {
         this.dispatchEvent(new CustomEvent("home", {
             bubbles: true,
+            composed: true,
         }));
     }
 }

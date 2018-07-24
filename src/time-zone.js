@@ -8,16 +8,16 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 import {
-    PolymerElement
+    PolymerElement,
 } from "@polymer/polymer/polymer-element.js";
 
 import "@polymer/iron-flex-layout/iron-flex-layout-classes.js";
 import {
-    GoogleCharts
+    GoogleCharts,
 } from "google-charts";
 import "./shared-styles.js";
 import {
-    html
+    html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
 class TimeZone extends PolymerElement {
     static get template() {
@@ -33,13 +33,12 @@ class TimeZone extends PolymerElement {
                 display: none;
             }
 
-            google-chart {
+            .chart {
                 width: 100%;
                 height: 350px;
             }
         </style>
-        <div id="chart" chartdata="[[getData(zone)]]"></div
-        <google-chart type="timeline" options="[[options]]" data="[[getData(zone)]]"></google-chart>
+        <div class="chart" id="chart" data="[[getData(zone)]]"></div>
 `;
     }
 
@@ -48,6 +47,7 @@ class TimeZone extends PolymerElement {
     }
 
     ready() {
+            super.ready();
             GoogleCharts.load(this.drawChart, "timeline");
         }
         /**
@@ -56,7 +56,6 @@ class TimeZone extends PolymerElement {
     static get properties() {
         return {
             _file: Object,
-            chartdata: Array,
             hidden: {
                 reflectToAttribute: true,
                 type: Boolean,
@@ -76,11 +75,34 @@ class TimeZone extends PolymerElement {
 
     drawChart() {
         if (this !== undefined) {
-            const geo_1_chart = new GoogleCharts.api.visualization.GeoChart(this.$.chart);
-            geo_1_chart.draw(this.chartdata, this.options);
+            const chart = new GoogleCharts.api.visualization.Timeline(this.$.chart);
+            let dataTable = new GoogleCharts.api.visualization.DataTable();
+            dataTable.addColumn({
+                type: "string",
+                id: "Day",
+            });
+            dataTable.addColumn({
+                type: "string",
+                id: "State",
+            });
+            dataTable.addColumn({
+                type: "date",
+                id: "Start",
+            });
+            dataTable.addColumn({
+                type: "date",
+                id: "End",
+            });
+            dataTable.addRows(this.getData(this.zone));
+
+            const options = {
+                tooltip: {
+                    isHtml: false,
+                },
+            };
+            chart.draw(dataTable, options);
         }
     }
-
 
     getData(zone) {
         if (zone !== undefined && zone !== null) {
@@ -90,7 +112,7 @@ class TimeZone extends PolymerElement {
             let results = [];
             let data = this.zone.objTimer;
 
-            results.push([days[0], this.getText(1), new Date(0 + tz), new Date(0 + tz)]);
+            // results.push([days[0], this.getText(1), new Date(0 + tz), new Date(0 + tz)]);
             for (let day = 0; day < 7; day++) {
                 let today = data.filter(item => item.iDay === day)
                 let lastTime = 0;
@@ -110,7 +132,32 @@ class TimeZone extends PolymerElement {
                 lastTime = 0;
                 this.hidden = false;
             }
-            return results;
+            const chart = new GoogleCharts.api.visualization.Timeline(this.$.chart);
+            let dataTable = new GoogleCharts.api.visualization.DataTable();
+            dataTable.addColumn({
+                type: "string",
+                id: "Day",
+            });
+            dataTable.addColumn({
+                type: "string",
+                id: "State",
+            });
+            dataTable.addColumn({
+                type: "date",
+                id: "Start",
+            });
+            dataTable.addColumn({
+                type: "date",
+                id: "End",
+            });
+            dataTable.addRows(results);
+
+            const options = {
+                tooltip: {
+                    isHtml: false,
+                },
+            };
+            chart.draw(dataTable, options);
         } else {
             this.hidden = true;
         }

@@ -37,6 +37,7 @@
     },
     "author": "Geoff Soord",
     "dependencies": {
+        "@fooloomanzoo/datetime-picker": "^2.9.1",
         "@polymer/app-layout": "^3.0.0-pre.18",
         "@polymer/app-route": "^3.0.0-pre.18",
         "@polymer/app-storage": "^3.0.0-pre.18",
@@ -54,7 +55,7 @@
         "@polymer/paper-dialog-scrollable": "^3.0.0-pre.18",
         "@polymer/paper-fab": "^3.0.0-pre.18",
         "@polymer/paper-icon-button": "^3.0.0-pre.18",
-        "@polymer/paper-input": "^3.0.0-pre.18",
+        "@polymer/paper-input": "^3.0.0-pre.21",
         "@polymer/paper-progress": "^3.0.0-pre.18",
         "@polymer/paper-toast": "^3.0.0-pre.18",
         "@polymer/paper-toggle-button": "^3.0.0-pre.18",

@@ -277,6 +277,7 @@ class MyApp extends PolymerElement {
     _setMode(mode, zoneId) {
         this.dispatchEvent(new CustomEvent("update-timer", {
             bubbles: true,
+            composed: true,
             detail: {
                 addr: zoneId,
                 data: {

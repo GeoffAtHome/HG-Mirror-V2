@@ -95,6 +95,7 @@ class PopupZone extends PolymerElement {
 
         this.dispatchEvent(new CustomEvent("update-timer", {
             bubbles: true,
+            composed: true,
             detail: {
                 "data": payload,
                 "fSP": 0,
@@ -141,18 +142,22 @@ class PopupZone extends PolymerElement {
         reader.onloadstart = (event) => {
             this.dispatchEvent(new CustomEvent("load-start", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
         };
         reader.onloadend = (event) => {
             this.dispatchEvent(new CustomEvent("update-timer", {
                 bubbles: true,
+                composed: true,
                 detail: JSON.parse(event.target.result),
             }));
         };
         reader.onerror = (event) => {
+            composed: true,
             this.dispatchEvent(new CustomEvent("error", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
             this.clearInput();
@@ -160,6 +165,7 @@ class PopupZone extends PolymerElement {
         reader.abort = (event) => {
             this.dispatchEvent(new CustomEvent("abort", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
             this.clearInput();
@@ -168,6 +174,7 @@ class PopupZone extends PolymerElement {
             // The file"s text will be printed here
             this.dispatchEvent(new CustomEvent("load", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
 

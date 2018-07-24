@@ -99,7 +99,7 @@ class MyLogin extends PolymerElement {
 
             </div>
         </div>
-        <my-app id="mainApp" hidden\$="[[!signedIn]]" headers="[[headers]]"
+        <my-app id="mainapp" hidden\$="[[!signedIn]]" headers="[[headers]]"
             server-name="[[serverName]]" offline="[[offline]]" signed-in="[[signedIn]]"></my-app>
 `;
     }
@@ -174,7 +174,9 @@ class MyLogin extends PolymerElement {
         let request = this.$.checkIn.generateRequest();
         request.completes.then(req => {
             // successful request, argument is iron-request element
-            import ("./my-app.js"); //.then(null, this._showPage404.bind(this));
+            let imp =
+                import ("./my-app.js");
+
 
             // Save the credentials for next login
             let credentials = {};
@@ -198,7 +200,9 @@ class MyLogin extends PolymerElement {
             this.inProgress = false;
             this.signedIn = !this.signedIn;
             // We went from hidden to visible, so app-layout needs to recompute its size.
-            this.$.mainApp.resizeHeader();
+            imp.then(results => {
+                this.$.mainapp.resizeHeader();
+            });
         }, rejected => {
             // failed request, argument is an object
             this.inProgress = false;

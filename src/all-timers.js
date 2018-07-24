@@ -96,6 +96,7 @@ class AllTimers extends PolymerElement {
         for (let zone of this.data) {
             this.dispatchEvent(new CustomEvent("update-timer", {
                 bubbles: true,
+                composed: true,
                 detail: {
                     "addr": zone.iID,
                     "data": payload,
@@ -147,6 +148,7 @@ class AllTimers extends PolymerElement {
         reader.onloadstart = (event) => {
             this.dispatchEvent(new CustomEvent("load-start", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
         };
@@ -154,6 +156,7 @@ class AllTimers extends PolymerElement {
             for (let zone of JSON.parse(event.target.result)) {
                 this.dispatchEvent(new CustomEvent("update-timer", {
                     bubbles: true,
+                    composed: true,
                     detail: zone,
                 }));
             }
@@ -161,6 +164,7 @@ class AllTimers extends PolymerElement {
         reader.onerror = (event) => {
             this.dispatchEvent(new CustomEvent("error", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
             this.clearInput();
@@ -168,6 +172,7 @@ class AllTimers extends PolymerElement {
         reader.abort = (event) => {
             this.dispatchEvent(new CustomEvent("abort", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
             this.clearInput();
@@ -176,6 +181,7 @@ class AllTimers extends PolymerElement {
             // The file"s text will be printed here
             this.dispatchEvent(new CustomEvent("load", {
                 bubbles: true,
+                composed: true,
                 detail: event.target.result,
             }));
 
