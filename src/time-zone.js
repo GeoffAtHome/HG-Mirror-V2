@@ -19,6 +19,15 @@ import "./shared-styles.js";
 import {
     html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
+
+let loaded = false;
+let loading = GoogleCharts.load(null, "timeline");
+loading.then(() => {
+    loaded = true;
+    console.log("charts are loaded");
+});
+
+
 class TimeZone extends PolymerElement {
     static get template() {
         return html `
@@ -46,13 +55,9 @@ class TimeZone extends PolymerElement {
         return "time-zone";
     }
 
-    ready() {
-            super.ready();
-            GoogleCharts.load(this.drawChart, "timeline");
-        }
-        /**
-         * Object describing property-related metadata used by Polymer features
-         */
+    /**
+     * Object describing property-related metadata used by Polymer features
+     */
     static get properties() {
         return {
             _file: Object,
@@ -73,39 +78,8 @@ class TimeZone extends PolymerElement {
         };
     }
 
-    drawChart() {
-        if (this !== undefined) {
-            const chart = new GoogleCharts.api.visualization.Timeline(this.$.chart);
-            let dataTable = new GoogleCharts.api.visualization.DataTable();
-            dataTable.addColumn({
-                type: "string",
-                id: "Day",
-            });
-            dataTable.addColumn({
-                type: "string",
-                id: "State",
-            });
-            dataTable.addColumn({
-                type: "date",
-                id: "Start",
-            });
-            dataTable.addColumn({
-                type: "date",
-                id: "End",
-            });
-            dataTable.addRows(this.getData(this.zone));
-
-            const options = {
-                tooltip: {
-                    isHtml: false,
-                },
-            };
-            chart.draw(dataTable, options);
-        }
-    }
-
     getData(zone) {
-        if (zone !== undefined && zone !== null) {
+        if (zone !== undefined && zone !== null && loaded === true) {
             const d = new Date();
             const tz = d.getTimezoneOffset() * 60 * 1000;
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -162,6 +136,8 @@ class TimeZone extends PolymerElement {
             this.hidden = true;
         }
     }
+
+    drawChart(zone) {}
 
     getText(setPoint) {
         if (this.zone.nodes[0].childValues["SwitchBinary"] !== undefined) {
