@@ -1,10 +1,5 @@
 {
-  "hosting": {
-    "public": "build/es5-bundled",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  }
+    "hosting": {
+        "public": "build/es5-bundled"
+    }
 }
