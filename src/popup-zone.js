@@ -97,6 +97,7 @@ class PopupZone extends PolymerElement {
             bubbles: true,
             composed: true,
             detail: {
+                "addr": this.zone.iID,
                 "data": payload,
                 "fSP": 0,
                 "name": this.zone.strName,

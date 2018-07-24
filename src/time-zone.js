@@ -24,9 +24,7 @@ let loaded = false;
 let loading = GoogleCharts.load(null, "timeline");
 loading.then(() => {
     loaded = true;
-    console.log("charts are loaded");
 });
-
 
 class TimeZone extends PolymerElement {
     static get template() {
@@ -86,9 +84,8 @@ class TimeZone extends PolymerElement {
             let results = [];
             let data = this.zone.objTimer;
 
-            // results.push([days[0], this.getText(1), new Date(0 + tz), new Date(0 + tz)]);
             for (let day = 0; day < 7; day++) {
-                let today = data.filter(item => item.iDay === day)
+                let today = data.filter(item => item.iDay === day);
                 let lastTime = 0;
                 let setPoint = 0;
                 for (let key of Object.keys(today)) {
@@ -109,20 +106,20 @@ class TimeZone extends PolymerElement {
             const chart = new GoogleCharts.api.visualization.Timeline(this.$.chart);
             let dataTable = new GoogleCharts.api.visualization.DataTable();
             dataTable.addColumn({
-                type: "string",
                 id: "Day",
-            });
-            dataTable.addColumn({
                 type: "string",
+            });
+            dataTable.addColumn({
                 id: "State",
+                type: "string",
             });
             dataTable.addColumn({
-                type: "date",
                 id: "Start",
+                type: "date",
             });
             dataTable.addColumn({
-                type: "date",
                 id: "End",
+                type: "date",
             });
             dataTable.addRows(results);
 
@@ -137,10 +134,8 @@ class TimeZone extends PolymerElement {
         }
     }
 
-    drawChart(zone) {}
-
     getText(setPoint) {
-        if (this.zone.nodes[0].childValues["SwitchBinary"] !== undefined) {
+        if (this.zone.nodes[0].childValues.SwitchBinary !== undefined) {
             if (setPoint === 0) {
                 return "Off";
             } else {

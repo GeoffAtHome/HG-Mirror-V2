@@ -218,7 +218,7 @@ class MyApp extends PolymerElement {
     }
 
     _clickHomeHandler(event) {
-        this.page = "home";
+        this.set('route.path', '/home');
     }
 
     _routePageChanged(page) {
@@ -287,15 +287,19 @@ class MyApp extends PolymerElement {
         }));
     }
     _pageChanged(page) {
+        let promise;
         switch (page) {
         case "home":
-            import ("./geniusmirror-app.js");
+            promise =
+                import ("./geniusmirror-app.js");
             break;
         case "boost":
-            import ("./boost-dialog.js");
+            promise =
+                import ("./boost-dialog.js");
             break;
         default:
-            import ("./popup-zone.js");
+            promise =
+                import ("./popup-zone.js");
             break;
         }
     }
