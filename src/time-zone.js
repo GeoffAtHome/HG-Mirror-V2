@@ -80,10 +80,8 @@ class TimeZone extends PolymerElement {
         // do something that requires access to the shadow tree
         if (this.loading === undefined) {
             this.loading = GoogleCharts.load(null, "timeline");
-            console.log("Chart loading");
             this.loading.then(() => {
                 this.loaded = true;
-                console.log("Chart loaded");
                 this.dispatchEvent(new CustomEvent("refresh", {
                     bubbles: true,
                     composed: true,
@@ -144,7 +142,6 @@ class TimeZone extends PolymerElement {
                 },
             };
             chart.draw(dataTable, options);
-            console.log("DrawChart");
         } else {
             this.hidden = true;
         }
