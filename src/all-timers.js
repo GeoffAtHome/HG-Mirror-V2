@@ -50,7 +50,7 @@ class AllTimers extends PolymerElement {
      */
     static get properties() {
         return {
-            data: Object,
+            data: Array,
         };
     }
     _clear() {

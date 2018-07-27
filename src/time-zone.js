@@ -20,11 +20,6 @@ import {
     html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
 
-let loaded = false;
-let loading = GoogleCharts.load(null, "timeline");
-loading.then(() => {
-    loaded = true;
-});
 
 class TimeZone extends PolymerElement {
     static get template() {
@@ -64,6 +59,11 @@ class TimeZone extends PolymerElement {
                 type: Boolean,
                 value: false,
             },
+            loaded: {
+                type: Boolean,
+                value: false,
+            },
+            loading: Object,
             options: {
                 type: Object,
                 value: {
@@ -75,14 +75,32 @@ class TimeZone extends PolymerElement {
             zone: Object,
         };
     }
-
+    ready() {
+        super.ready();
+        // do something that requires access to the shadow tree
+        if (this.loading === undefined) {
+            this.loading = GoogleCharts.load(null, "timeline");
+            console.log("Chart loading");
+            this.loading.then(() => {
+                this.loaded = true;
+                console.log("Chart loaded");
+                this.dispatchEvent(new CustomEvent("refresh", {
+                    bubbles: true,
+                    composed: true,
+                }));
+            });
+        }
+    }
     getData(zone) {
-        if (zone !== undefined && zone !== null && loaded === true) {
+        if (zone !== undefined && zone !== null && this.loaded === true) {
+            this.hidden = false;
+            const chart = new GoogleCharts.api.visualization.Timeline(this.$.chart);
+            const dataTable = new GoogleCharts.api.visualization.DataTable();
             const d = new Date();
             const tz = d.getTimezoneOffset() * 60 * 1000;
             const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-            let results = [];
-            let data = this.zone.objTimer;
+            const results = [];
+            const data = this.zone.objTimer;
 
             for (let day = 0; day < 7; day++) {
                 let today = data.filter(item => item.iDay === day);
@@ -101,10 +119,7 @@ class TimeZone extends PolymerElement {
                 results.push([days[day], this.getText(setPoint), new Date((lastTime * 1000) + tz), new Date(
                     (24 * 60 * 60 * 1000) + tz)]);
                 lastTime = 0;
-                this.hidden = false;
             }
-            const chart = new GoogleCharts.api.visualization.Timeline(this.$.chart);
-            let dataTable = new GoogleCharts.api.visualization.DataTable();
             dataTable.addColumn({
                 id: "Day",
                 type: "string",
@@ -129,6 +144,7 @@ class TimeZone extends PolymerElement {
                 },
             };
             chart.draw(dataTable, options);
+            console.log("DrawChart");
         } else {
             this.hidden = true;
         }

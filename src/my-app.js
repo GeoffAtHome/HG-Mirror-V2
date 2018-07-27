@@ -27,7 +27,6 @@ import "./my-icons.js";
 import "./title-card.js";
 import "./zone-menu.js";
 import "./shared-styles.js";
-import "./all-timers.js";
 import {
     html,
 } from "@polymer/polymer/lib/utils/html-tag.js";
@@ -158,6 +157,7 @@ class MyApp extends PolymerElement {
         super.ready();
         window.addEventListener("update-timer", event => this._updateTimer(event));
         window.addEventListener("home", event => this._clickHomeHandler(event));
+        window.addEventListener("refresh", event => this.handleUpdate(event));
     }
 
     _updateTimer(event) {
@@ -297,9 +297,13 @@ class MyApp extends PolymerElement {
             promise =
                 import ("./boost-dialog.js");
             break;
-        default:
+        case 'timer':
             promise =
                 import ("./popup-zone.js");
+            break;
+        case 'timers':
+            promise =
+                import ("./all-timers.js");
             break;
         }
     }
