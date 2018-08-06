@@ -27,7 +27,7 @@ class LastSeen extends PolymerElement {
                 width: 50px;
             }
         </style>
-        <span>&nbsp;[[value]]</span>
+        <span>[[value]]</span>
 `;
     }
 

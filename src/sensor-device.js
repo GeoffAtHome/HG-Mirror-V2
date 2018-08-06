@@ -36,7 +36,7 @@ class SensorDevice extends PolymerElement {
         <div class="layout horizontal start">
             <iron-icon icon="my-icons:sensor"></iron-icon>
             <battery-level data="[[data]]"></battery-level>
-            <temperature-level data="[[data]]"></temperature-level>
+            <temperature-level data="[[data]]"></temperature-level>&nbsp;
             <last-seen lastseen="[[lastseen]]"></last-seen>
             <luminance-level data="[[data]]"></luminance-level>
             <motion-level data="[[data]]"></motion-level>

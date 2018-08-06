@@ -33,7 +33,7 @@ class RadiatorDevice extends PolymerElement {
         <div class="layout horizontal start">
             <iron-icon on\$="[[getRadiatorState(on)]]" icon="my-icons:radiator"></iron-icon>
             <battery-level data="[[data]]"></battery-level>
-            <temperature-level data="[[data]]"></temperature-level>
+            <temperature-level data="[[data]]"></temperature-level>&nbsp;
             <last-seen lastseen="[[lastseen]]"></last-seen>
         </div>
 `;
