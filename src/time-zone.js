@@ -115,7 +115,7 @@ class TimeZone extends PolymerElement {
                     lastTime = event.iTm;
                 }
                 results.push([days[day], this.getText(setPoint), new Date((lastTime * 1000) + tz), new Date(
-                    (24 * 60 * 60 * 1000) + tz)]);
+                    (24 * 60 * 60 * 1000) - 1 + tz)]);
                 lastTime = 0;
             }
             dataTable.addColumn({
