@@ -37,7 +37,7 @@ class ZoneCard extends PolymerElement {
             <div class="card">
                 <zone-header zone="[[zone]]" on\$="[[getZoneState(zone.bOutRequestHeat)]]"></zone-header>
                 <div class="layout vertical start">
-                    <template is="dom-repeat" items="[[zone.nodes]]" as="node" sort="_sort">
+                    <template is="dom-repeat" items="[[zone.nodes]]" as="node" filter="shouldDisplay" sort="_sort">
                         <device-card node="[[node]]" on="[[zone.bIsActive]]"
                          data="[[getDeviceData(node)]]"></device-card>
                     </template>
@@ -55,6 +55,10 @@ class ZoneCard extends PolymerElement {
         return {
             zone: Object,
         };
+    }
+
+    shouldDisplay(item) {
+        return item.addr !== "WeatherData";
     }
     getZoneState(value) {
         if (value !== undefined && value) {

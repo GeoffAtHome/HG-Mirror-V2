@@ -81,12 +81,12 @@ class MyApp extends PolymerElement {
          on-response="handleUpdate"></iron-ajax>
 
         <app-location route="{{route}}" url-space-regex="^[[rootPath]]"></app-location>
-        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
+        <app-route route="{{route}}" pattern="[[rootPath]]:page" data="{{routeData}}" tail="{{subRoute}}"></app-route>
         <app-drawer-layout fullbleed="" narrow="{{narrow}}">
             <!-- Drawer content -->
             <app-drawer id="drawer" slot="drawer" swipe-open="[[narrow]]">
                 <app-toolbar>Menu</app-toolbar>
-                <iron-selector selected="[[pagezone]]" attr-for-selected="name" class="drawer-list" role="navigation">
+                <iron-selector selected="[[pageZone]]" attr-for-selected="name" class="drawer-list" role="navigation">
                     <a class="menuitem" name="home" href="[[rootPath]]home">Home</a>
                     <template is="dom-repeat" items="[[persistedData]]" as="zone">
 
@@ -107,7 +107,7 @@ class MyApp extends PolymerElement {
                         <title-card data="[[persistedWholeHouse]]"></title-card>
                     </app-toolbar>
                 </app-header>
-                <div id="mainpage">
+                <div id="mainPage">
                     <iron-pages selected="[[page]]" attr-for-selected="name" fallback-selection="main" role="main">
                         <popup-zone name="timer" id="timer" data="[]"></popup-zone>
                         <boost-dialog name="boost" id="boost" data="[]"></boost-dialog>
@@ -136,13 +136,13 @@ class MyApp extends PolymerElement {
                 reflectToAttribute: true,
                 type: String,
             },
-            pagezone: String,
+            pageZone: String,
             persistedData: Object,
             persistedWholeHouse: Object,
             routeData: Object,
             serverName: String,
             signedIn: Boolean,
-            subroute: String,
+            subRoute: String,
             timer: Object,
         };
     }
@@ -188,7 +188,7 @@ class MyApp extends PolymerElement {
             this.persistedData = results[0];
             this.persistedWholeHouse = results[1];
         });
-        this.$.toast.fitInto = this.$.mainpage;
+        this.$.toast.fitInto = this.$.mainPage;
         this.$.toast.open();
         this.startTimer();
     }
@@ -225,30 +225,30 @@ class MyApp extends PolymerElement {
         // If no page was found in the route data, page will be an empty string.
         // Default to "view1" in that case.
         this.page = page || "home";
-        this.pagezone = this.page;
+        this.pageZone = this.page;
 
         if (this.persistedData !== undefined) {
 
             if (this.page === "timer") {
-                let zoneId = parseInt(this.subroute.path.slice(1));
+                let zoneId = parseInt(this.subRoute.path.slice(1));
                 if (!isNaN(zoneId)) {
                     let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
-                    this.pagezone = zone.strName;
+                    this.pageZone = zone.strName;
                     this.$.timer.zone = zone;
                 }
             } else if (this.page === "boost") {
-                let zoneId = parseInt(this.subroute.path.slice(1));
+                let zoneId = parseInt(this.subRoute.path.slice(1));
                 if (!isNaN(zoneId)) {
                     let zone = this.persistedData.filter(item => item.iID === zoneId)[0];
-                    this.pagezone = zone.strName;
+                    this.pageZone = zone.strName;
                     this.$.boost.zone = zone;
                 }
             } else if (this.page === "timers") {
                 this.$.timers.data = this.persistedData;
-            } else if (this.page === "home" && this.subroute.path !== undefined) {
-                const subpaths = this.subroute.path.slice(1).split("/");
-                const zoneId = parseInt(subpaths[0]);
-                const mode = subpaths[1];
+            } else if (this.page === "home" && this.subRoute.path !== undefined) {
+                const subPaths = this.subRoute.path.slice(1).split("/");
+                const zoneId = parseInt(subPaths[0]);
+                const mode = subPaths[1];
 
                 if (mode === "off") {
                     this._setMode(1, zoneId);
@@ -260,12 +260,12 @@ class MyApp extends PolymerElement {
                     this._setMode(4, zoneId);
                 }
                 // stop repeat actions
-                this.subroute = {};
+                this.subRoute = {};
             }
         } else {
             // No data so stay at home
             this.page = "home";
-            this.pagezone = this.page;
+            this.pageZone = this.page;
         }
 
         // Close a non-persistent drawer when the page & route are changed.
@@ -297,11 +297,11 @@ class MyApp extends PolymerElement {
             promise =
                 import ("./boost-dialog.js");
             break;
-        case 'timer':
+        case "timer":
             promise =
                 import ("./popup-zone.js");
             break;
-        case 'timers':
+        case "timers":
             promise =
                 import ("./all-timers.js");
             break;
