@@ -67,9 +67,11 @@ class ZoneCard extends PolymerElement {
     }
 
     getDeviceData(node) {
-        const path = node.childValues.location.path;
-        const data = this.zone.datapoints.filter(x => x.path === path);
-        return data;
+        if (this.shouldDisplay(node)) {
+            const path = node.childValues.location.path;
+            const data = this.zone.datapoints.filter(x => x.path === path);
+            return data;
+        }
     }
 
     _sort(a, b) {
