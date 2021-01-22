@@ -37,7 +37,6 @@ class MyApp extends PolymerElement {
             :host {
                 --app-primary-color: #4285f4;
                 --app-secondary-color: black;
-
                 display: block;
             }
 
@@ -179,15 +178,17 @@ class MyApp extends PolymerElement {
 
     handleError(e) {
         // We failed to contact the hub... lets retrive the data from the mirrored DB
-        const promises = [];
-        promises.push(this.$.zones.getStoredValue("zones"));
-        promises.push(this.$.wholehouse.getStoredValue("wholehouse"));
+        if(this.$.zones !== undefined) {
+            const promises = [];
+            promises.push(this.$.zones.getStoredValue("zones"));
+           promises.push(this.$.wholehouse.getStoredValue("wholehouse"));
 
-        const all = Promise.all(promises);
-        all.then(results => {
-            this.persistedData = results[0];
-            this.persistedWholeHouse = results[1];
-        });
+            const all = Promise.all(promises);
+            all.then(results => {
+                this.persistedData = results[0];
+                this.persistedWholeHouse = results[1];
+            });
+        }
         this.$.toast.fitInto = this.$.mainPage;
         this.$.toast.open();
         this.startTimer();
