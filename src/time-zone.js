@@ -112,10 +112,12 @@ class TimeZone extends PolymerElement {
                             (event.iTm * 1000) + tz)]);
                     }
                     setPoint = event.fSP;
-                    lastTime = event.iTm;
+                    lastTime = Math.max(0,event.iTm);
                 }
-                results.push([days[day], this.getText(setPoint), new Date((lastTime * 1000) + tz), new Date(
-                    (24 * 60 * 60 * 1000) - 1 + tz)]);
+                if (lastTime !== 86400) {
+                    results.push([days[day], this.getText(setPoint), new Date((lastTime * 1000) + tz), new Date(
+                        (24 * 60 * 60 * 1000) - 1 + tz)]);
+                }
                 lastTime = 0;
             }
             dataTable.addColumn({
