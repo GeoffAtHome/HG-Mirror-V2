@@ -1,41 +1,30 @@
-# Heat Genius Mirror V2
+<p align="center">
+  <img width="200" src="https://open-wc.org/hero.png"></img>
+</p>
 
-## Overview
-This project allows the timer data to be saved and restored. So for example, if you want to change your setting for when you are on holiday save the setting and restore them when you get back.
+## Open-wc Starter App
 
-This can be run locally, with a local IP address to your Genius Hub, or remote with an external  URL to your Genuis Hub.
+[![Built with open-wc recommendations](https://img.shields.io/badge/built%20with-open--wc-blue.svg)](https://github.com/open-wc)
 
-In `src\my-app.html` change the two occurrences as necessary.
+## Quickstart
 
-        value: "https://hub-server-1.heatgenius.co.uk/v3/zones" // Remote 
-        // value: "http://[[your.local.ip.address]]:1223/v3/zones" // Local
+To get started:
 
+```sh
+npm init @open-wc
+# requires node 10 & npm 6 or higher
+```
 
-        ajax.url = 'https://hub-server-1.heatgenius.co.uk/v3/zone/' + event.detail.addr; // Remote
-        // ajax.url = 'http://[[your.local.ip.address]]:1223/v3/zone/' + event.detail.addr; // Local
+## Scripts
 
-May be in a future release I'll may this a configuration option ina settings panel.
+- `start` runs your app for development, reloading on file changes
+- `start:build` runs your app after it has been built using the build command
+- `build` builds your app and outputs it in your `dist` directory
+- `test` runs your test suite with Web Test Runner
+- `lint` runs the linter for your project
 
-## Build the project
-Download from Github. Run:
+## Tooling configs
 
-`bower install`
+For most of the tools, the configuration is in the `package.json` to reduce the amount of files in your project.
 
-(this assumes you have bower and npm installed)
-
-## To test locally
-Run
-
-`polymer serve --open`
-
-## To build
-Run
-
-`polymer build`
-
-## To host
-Deploy the contents of the build directory as required.
-
-For more details about the Polymer-cli see [https://www.polymer-project.org/](https://www.polymer-project.org/)
-
-Suggestions welcome for addition features to add.
+If you customize the configuration a lot, you can consider moving them to individual files.

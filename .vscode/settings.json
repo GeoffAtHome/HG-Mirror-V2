@@ -1,5 +1,6 @@
 {
-    "files.associations": {
-        "*.yaml": "home-assistant"
-    }
+  "files.associations": {
+    "*.yaml": "home-assistant"
+  },
+  "cSpell.words": ["vaadin"]
 }
